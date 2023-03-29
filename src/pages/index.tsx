@@ -1,12 +1,4 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter, Poppins } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
-
-const inter = Poppins({
-  subsets: ['latin'],
-  weight: '100'
-})
+import Head from "next/head";
 
 export default function Home() {
   return (
@@ -17,9 +9,9 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <h1>Birdflu Tracker</h1>
+      <main className={`text-lg`}>
+        <h1 className="text-blue-600">Birdflu Tracker</h1>
       </main>
     </>
-  )
+  );
 }
