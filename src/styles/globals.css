@@ -4,6 +4,25 @@
 @tailwind components;
 @tailwind utilities;
 
-html,body{
+
+@layer base {
+    :root {
+        --color-primary: 171 86 81;
+        --color-secondary: 250 222 190;
+        --color-tertiary: 255 253 253;
+        --color-border: 0 0 0;
+        --color-label-bg: 217 217 217;
+        --color-light-placeholder: 140 140 140;
+        --color-white: 255 255 255;
+    }
+}
+
+* {
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+html,body {
     font-family: 'Poppins', sans-serif;
 }
