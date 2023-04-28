@@ -87,14 +87,19 @@ const SignIn = () => {
           </form>
           <p className="text-center">
             dont have an account ?
-            <Link href="/auth/signup" className="text-primary font-semibold ml-2">
+            <Link
+              href="/auth/signup"
+              className="text-primary font-semibold ml-2"
+            >
               Sign Up
             </Link>
           </p>
         </div>
       </div>
       <div className="absolute left-8 top-8 h-18 w-44">
-        <Image src={Logo} alt="" />
+        <Link href={"/"}>
+          <Image src={Logo} alt="" />
+        </Link>{" "}
       </div>
       <div className="absolute -right-20 -top-28 h-80 w-80">
         <Image src={Graphic} alt="" />

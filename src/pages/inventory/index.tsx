@@ -4,6 +4,7 @@ import Logo from "@assets/logo/logo.svg";
 import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
 import ChickenIcon from "@assets/Images/chicken-icon.svg";
+import PieChart from "@/features/ui/PieChart/PieChart";
 const Inventory = () => {
   let links = [
     {
@@ -23,7 +24,9 @@ const Inventory = () => {
       <div className="w-1/6 p-7 flex flex-col justify-between ">
         <div className="space-y-10">
           <div className=" h-15 w-40">
-            <Image src={Logo} alt="" />
+            <Link href={"/"}>
+              <Image src={Logo} alt="" />
+            </Link>
           </div>
           <div className="flex flex-col space-y-2">
             <Link
@@ -65,6 +68,63 @@ const Inventory = () => {
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
           <h1 className="text-primary text-3xl font-bold">Inventory</h1>
+          <div className="p-5 text-center">
+            <table className="w-full ">
+              <thead className="text-primary font-medium">
+                <tr>
+                  <td>Date</td>
+                  <td>Time</td>
+                  <td>BatchID</td>
+                  <td>Batch Size</td>
+                  <td>Distributor</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b   ">
+                  <td className="py-2">12 Mar 23</td>
+                  <td>17:00</td>
+                  <td>2404</td>
+                  <td>10</td>
+                  <td>Mangesh Tupe</td>
+                </tr>
+                <tr className="border-b   ">
+                  <td className="py-2">12 Mar 23</td>
+                  <td>17:00</td>
+                  <td>2404</td>
+                  <td>10</td>
+                  <td>Mangesh Tupe</td>
+                </tr>
+                <tr className="border-b   ">
+                  <td className="py-2">12 Mar 23</td>
+                  <td>17:00</td>
+                  <td>2404</td>
+                  <td>10</td>
+                  <td>Mangesh Tupe</td>
+                </tr>{" "}
+                <tr className="border-b   ">
+                  <td className="py-2">12 Mar 23</td>
+                  <td>17:00</td>
+                  <td>2404</td>
+                  <td>10</td>
+                  <td>Mangesh Tupe</td>
+                </tr>{" "}
+                <tr className="border-b   ">
+                  <td className="py-2">12 Mar 23</td>
+                  <td>17:00</td>
+                  <td>2404</td>
+                  <td>10</td>
+                  <td>Mangesh Tupe</td>
+                </tr>{" "}
+                <tr className="border-b   ">
+                  <td className="py-2">12 Mar 23</td>
+                  <td>17:00</td>
+                  <td>2404</td>
+                  <td>10</td>
+                  <td>Mangesh Tupe</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
         <div className="bg-white h-full rounded-xl w-[25%] p-5 space-y-4">
           <h1 className="text-primary text-xl font-bold">Market Summary</h1>
@@ -91,6 +151,11 @@ const Inventory = () => {
               height={50}
               className="text-textSecondary/50 self-end"
             />
+          </div>
+          <div className="">
+            <div className="w-full h-60">
+              <PieChart />
+            </div>
           </div>
         </div>
       </div>

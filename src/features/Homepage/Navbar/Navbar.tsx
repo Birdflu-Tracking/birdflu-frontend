@@ -16,11 +16,11 @@ const Navbar = () => {
           <div className="absolute -bottom-[2px] h-[2px] bg-primary w-full"></div>
         </div>
         <Link href="/dashboard">Dashboard</Link>
-        <Link href="/">Report Flu</Link>
+        <Link href="/reporting">Report Flu</Link>
       </div>
       <div className="">
         <Link href={"/auth/signin"}>
-          <Button value="Sign In" rounded="rounded-xl" />
+          <Button value="Sign In" rounded="rounded-xl" onClick={() => {}} />
         </Link>
       </div>
     </div>

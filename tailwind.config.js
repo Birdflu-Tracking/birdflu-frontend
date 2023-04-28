@@ -10,22 +10,11 @@ module.exports = {
   ],
   theme: {
     extend: {
-  
       colors: {
-      textSecondary: "#3E3E3E",
-      primary: 'rgb(var(--color-primary))',
-      secondary: 'rgb(var(--color-secondary))',
-      tertiary: 'rgb(var(--color-tertiary))',
-      light: 'rgb(var(--color-border) / 10%)',
-      labelBg: 'rgb(var(--color-label-bg))',
-      lightPlaceholder: 'rgb(var(--color-light-placeholder))',
-      white: 'rgb(var(--color-white))',
-      transparent: 'rgb(0 0 0 / 0)'
-    },
-    extend: {
-      fontFamily: {
-        Poppins: ['Popins', "sans-pserif"]
-      }
+        primary: "#993E3A",
+        secondary: "#FDF3E6",
+        textSecondary: "#3E3E3E",
+      },
     },
   },
   plugins: [],

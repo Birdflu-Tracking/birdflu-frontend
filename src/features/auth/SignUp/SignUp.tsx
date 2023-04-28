@@ -23,6 +23,8 @@ const SignUp = () => {
   });
   const [errors, setErrors] = useState<string>("");
   const [validated, setValidated] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
   useEffect(() => {
     setTimeout(() => {
@@ -52,6 +54,7 @@ const SignUp = () => {
       data.outlet_name &&
       data.phone_number
     ) {
+      setLoading(true);
       axios
         .post(`http://localhost:8080/api/auth/create/${data.user_type}`, {
           firstName: data.full_name,
@@ -66,9 +69,18 @@ const SignUp = () => {
         .then((d) => {
           console.log(d);
           router.push("/dashboard");
+          setLoading(false);
         })
         .catch((err) => {
-          setErrors("User already Exist please login");
+          console.log(err);
+
+          setLoading(false);
+
+          if (err.code === "ERR_NETWORK") {
+            setErrors("No internet");
+          } else {
+            setErrors("User already Exist please login");
+          }
         });
     }
   }
@@ -189,17 +201,22 @@ const SignUp = () => {
               required
             />
           </div>
-          <Button value="Sign Up" onClick={() => handleSignup()} rounded="lg" />
+          <Button value="Sign Up" onClick={() => handleSignup()} rounded="lg" disabled={loading}/>
         </form>
         <p className="text-center">
           Already have an account ?
-          <Link href="/auth/signin" className="text-primary font-semibold ml-2  ">
+          <Link
+            href="/auth/signin"
+            className="text-primary font-semibold ml-2  "
+          >
             Sign In
           </Link>
         </p>
       </div>
       <div className="absolute left-8 top-8 h-18 w-44">
-        <Image src={Logo} alt="" />
+        <Link href={"/"}>
+          <Image src={Logo} alt="" />
+        </Link>
       </div>
       <div className="absolute -right-20 -top-28 h-80 w-80">
         <Image src={Graphic} alt="" />

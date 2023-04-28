@@ -7,6 +7,8 @@ import BarChart from "@/features/ui/BarChart/BarChart";
 import { useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 
+//assets
+import TapPay from "@assets/Images/tap-transfer.png";
 const Dashboard = () => {
   let links = [
     {
@@ -21,6 +23,7 @@ const Dashboard = () => {
     },
   ];
   const [toggle, settoggle] = useState(false);
+  const [transferModalToggle, setTransferModalToggle] = useState(false);
   const state = {
     options: [
       { name: "Depression", id: 1 },
@@ -37,7 +40,9 @@ const Dashboard = () => {
       <div className="w-1/6 p-7 flex flex-col justify-between ">
         <div className="space-y-10">
           <div className=" h-15 w-40">
-            <Image src={Logo} alt="" />
+            <Link href={"/"}>
+              <Image src={Logo} alt="" />
+            </Link>
           </div>
           <div className="flex flex-col space-y-2">
             <Link
@@ -147,13 +152,14 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="w-full bg-secondary rounded-xl p-4">
-            <table className="w-full ">
+            <table className="w-full text-center ">
               <thead className="text-primary font-medium">
                 <tr>
                   <td>Date</td>
                   <td>Time</td>
                   <td>BatchID</td>
                   <td>Batch Size</td>
+                  <td>Transfer</td>
                 </tr>
               </thead>
 
@@ -163,18 +169,54 @@ const Dashboard = () => {
                   <td>17:00</td>
                   <td>2404</td>
                   <td>10</td>
+                  <td>
+                    <button
+                      onClick={() =>
+                        setTransferModalToggle(!transferModalToggle)
+                      }
+                    >
+                      <Icon
+                        icon="fluent:location-live-20-regular"
+                        height={30}
+                      />
+                    </button>
+                  </td>
                 </tr>
                 <tr className="border-b   ">
                   <td className="py-2">12 Mar 23</td>
                   <td>17:00</td>
                   <td>2404</td>
                   <td>10</td>
+                  <td>
+                    <button
+                      onClick={() =>
+                        setTransferModalToggle(!transferModalToggle)
+                      }
+                    >
+                      <Icon
+                        icon="fluent:location-live-20-regular"
+                        height={30}
+                      />
+                    </button>
+                  </td>
                 </tr>
                 <tr className="border-b   ">
                   <td className="py-2">12 Mar 23</td>
                   <td>17:00</td>
                   <td>2404</td>
                   <td>10</td>
+                  <td>
+                    <button
+                      onClick={() =>
+                        setTransferModalToggle(!transferModalToggle)
+                      }
+                    >
+                      <Icon
+                        icon="fluent:location-live-20-regular"
+                        height={30}
+                      />
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -230,12 +272,30 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      {transferModalToggle && (
+        <div className="absolute h-screen w-screen bg-gray-400/30 flex items-center justify-center">
+          <div className="relative h-fit w-96 rounded-2xl shadow-lg bg-white p-6 flex flex-col items-center">
+            <button
+              onClick={() => setTransferModalToggle(false)}
+              className="self-end"
+            >
+              <Icon icon="ic:round-close" height={30} />
+            </button>
+            <Image src={TapPay} height={150} width={150} />
+            <h1 className="text-textSecondary  text-center text-xl">
+              Tap Your NFC card to transfer batch
+            </h1>
+          </div>
+        </div>
+      )}
       {toggle && (
         <div className="absolute h-screen w-screen bg-gray-400/30 flex items-center justify-center">
           <div className="relative h-fit w-1/2 rounded-lg shadow-lg bg-white p-6 flex flex-col">
             <div className="flex justify-between pb-4">
               <p className="font-semibold">Submit chicken symptoms report</p>
-              <button onClick={() => settoggle(false)}>X</button>
+              <button onClick={() => settoggle(false)}>
+                <Icon icon="ic:round-close" height={30} />
+              </button>
             </div>
             <div className="flex-1 space-y-4">
               <div className="space-y-2">
