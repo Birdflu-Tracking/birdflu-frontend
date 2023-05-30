@@ -3,13 +3,13 @@ const Button: React.FC<{
   fullWidth?: boolean;
   rounded: string;
   text: string;
-  disabled: boolean;
-  onClick: () => void;
-}> = ({ value, rounded, fullWidth = false, text, onClick, disabled }) => {
+  disabled?: boolean;
+  onClick: (e:MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+}> = ({ value, rounded, fullWidth = false, text, onClick, disabled=false }) => {
   return (
     <button
       disabled={disabled == true}
-      onClick={() => onClick()}
+      onClick={(e) => onClick(e)}
       type="submit"
       className={`disabled:opacity-5 h-fit bg-primary text-white  py-2 px-5 ${rounded} ${
         fullWidth ? "w-full" : "w-fit"

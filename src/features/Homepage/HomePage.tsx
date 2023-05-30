@@ -4,7 +4,8 @@ const HomePage = () => {
   return (
     <div>
       <Navbar />
-      <div className="h-screen w-full">
+      <div className="h-screen w-screen relative">
+        <div className="h-"></div>
         <Map />
       </div>
     </div>

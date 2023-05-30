@@ -1,10 +1,57 @@
 import Navbar from "@/features/Homepage/Navbar/Navbar";
+import Button from "@/ui/Button/Button";
 import { FormInput } from "@/ui/FormInput/FormInput";
 import { PrimaryButton } from "@/ui/PrimaryButton/PrimaryButton";
-import React from "react";
+import axios from "axios";
+import React, { use, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
+type ReportingDataType = {
+  fullName: string | undefined;
+  address: string | undefined;
+  contact: string | undefined;
+  poultryShop: string | undefined;
+  symtompsStartDate: string | undefined;
+};
+export default function Reporting() {
+  const [loading,setLoading]=useState(false)
+  const [data, setData] = useState<ReportingDataType>({
+    fullName: undefined,
+    address: undefined,
+    contact: undefined,
+    poultryShop: undefined,
+    symtompsStartDate: undefined,
+  });
 
-export default function reporting() {
+  function handleSubmit(e) {
+    e.preventDefault();
+    console.log(data);
+    if (
+      data.fullName &&
+      data.address &&
+      data.contact &&
+      data.poultryShop &&
+      data.symtompsStartDate
+    ) {
+      setLoading(true)
+      axios
+        .post("http://192.168.8.30:8080/open/submit-flu-report", {
+          reporterName: data.fullName,
+          phoneNumber: data.contact,
+          address: data.address,
+          poultryShop: data.poultryShop,
+          symptomStartDate: data.symtompsStartDate,
+        })
+        .then(() => {
+          setLoading(false)
+          console.log("success");
+        })
+        .catch(() => {
+          setLoading(false)
+
+          console.log("failed");
+        });
+    }
+  }
   return (
     <>
       <Navbar />
@@ -15,40 +62,69 @@ export default function reporting() {
           <div>
             {[
               {
+                dataName: "fullName",
                 label: "Full Name",
                 placeholder: "Enter your full name",
                 type: "text",
               },
               {
+                dataName: "address",
+
                 label: "Address",
                 placeholder: "Enter your address",
                 type: "text",
               },
               {
+                dataName: "contact",
+
                 label: "Phone Number",
                 placeholder: "Enter your phone number",
                 type: "number",
               },
               {
+                dataName: "poultryShop",
+
                 label: "Poultry shop",
                 placeholder: "Search poultry shop",
                 type: "search",
               },
               {
+                dataName: "symtompsStartDate",
                 label: "Symptoms starting date",
                 placeholder: "",
                 type: "date",
               },
-            ].map((item) => {
-              return (
-                <FormInput
-                  label={item.label}
-                  placeholder={item.placeholder}
-                  type={item.type}
-                  key={uuidv4()}
-                />
-              );
-            })}
+            ].map(
+              (item: {
+                dataName: string;
+                label: string;
+                placeholder: string;
+                type: string;
+              }) => {
+                return (
+                  <FormInput
+                    required
+                    label={item.label}
+                    placeholder={item.placeholder}
+                    type={item.type}
+                    key={uuidv4()}
+                    //@ts-ignore
+                    onChange={(e) => {
+                      setData((prev) => {
+                        //@ts-ignore
+                        var newdata = prev;
+                        console.log(prev)
+                        //@ts-ignore
+                        newdata[item.dataName] = e.target.value;
+                        
+                          return newdata;
+                        
+                      });
+                    }}
+                  />
+                );
+              }
+            )}
             {/* Phone OTP */}
             <div className="flex">
               <FormInput
@@ -62,7 +138,12 @@ export default function reporting() {
               Your data will be encrypted and stored on your server, we dont
               sell your use your data without your permissions.
             </p>
-            <PrimaryButton label="Submit" className={"px-6 mt-2 h-12"} />
+            <Button
+              value="Submit"
+              rounded="rounded-md"
+              onClick={(e) => handleSubmit(e)}
+              disabled={loading==true}
+            />
           </div>
 
           {/* Attachments */}

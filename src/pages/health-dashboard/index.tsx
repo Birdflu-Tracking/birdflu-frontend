@@ -9,16 +9,17 @@ import Multiselect from "multiselect-react-dropdown";
 
 //assets
 import TapPay from "@assets/Images/tap-transfer.png";
+import Map from "@/ui/Map/Map";
 const Dashboard = () => {
   let links = [
     {
       name: "Dashboard",
-      path: "/dashboard",
+      path: "/health-worker",
       icon: "material-symbols:space-dashboard-rounded",
     },
     {
-      name: "Inventory",
-      path: "/inventory",
+      name: "Reports",
+      path: "/health-reports",
       icon: "material-symbols:inventory-2",
     },
   ];
@@ -60,7 +61,7 @@ const Dashboard = () => {
               className=" p-3 text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
             >
               <Icon icon="material-symbols:inventory-2" height={20} />{" "}
-              <p>Inventory</p>
+              <p>Reports</p>
             </Link>
           </div>
         </div>
@@ -88,138 +89,48 @@ const Dashboard = () => {
             <h5 className="text-primary text-lg font-semibold">Dashboard</h5>
             <p className="text-base font-semibold">Hi Sanket ProFarmer</p>
           </div>
-          <div className="h-[45%] flex space-x-4">
-            <div className="bg-primary/10 rounded-xl p-5 flex-[1] space-y-2">
-              <h1
-                className="text-primary text-2xl font-semibold
-              "
-              >
-                <span className="text-5xl font-bold">132</span> Chickens <br />{" "}
-                Sold this Month
-              </h1>
-              <div className="w-full h-[250px]">
-                <BarChart />
-              </div>
-            </div>
-            <div className=" space-y-4 flex-[1] self-end flex flex-col">
-              <div className="text-sm self-end">
-                <button className="py-2 px-4 bg-secondary rounded-l-xl">
-                  Weekly
-                </button>
-                <button className="py-2 px-4 text-white bg-primary rounded-r-xl">
-                  Monthly
-                </button>
-              </div>
-              <div className="bg-secondary p-5 rounded-xl">
-                <h1 className="text-primary text-4xl font-bold">3411</h1>
-                <p className="text-textSecondary font-medium">
-                  Total Batches Generated
-                </p>
-              </div>
-              <div className="bg-secondary p-5 rounded-xl">
-                <h1 className="text-primary text-4xl font-bold">2311</h1>
-                <p className="text-textSecondary font-medium">
-                  Total Batches Sold
-                </p>
-              </div>
-            </div>
+          <div className="h-[350px] w-full rounded-xl overflow-hidden">
+            <Map />
+          </div>
+          <div className="h-[300px] w-full rounded-xl bg-primary/10 p-4">
+            <BarChart />
           </div>
           <div className="space-y-4">
-            <h1 className="text-primary font-semibold">Recent Batches Sold</h1>
+            <h1 className="text-primary font-semibold">Highest Reports</h1>
             <div className="flex space-x-4">
               <div className="flex flex-[1] justify-between items-center bg-secondary rounded-xl p-4 space-x-4 font-medium">
                 <div className="space-x-2 flex items-center">
                   <Icon
-                    icon="material-symbols:supervised-user-circle"
-                    className="text-primary"
-                    height={30}
+                    icon="mdi:virus-outline"
+                    height={50}
+                    className="text-red-600"
                   />
-                  <p>Mangesh Distribution</p>
+                  <div className="">
+                    <p className="text-base font-semibold text-gray-600">
+                      Mangesh Distribution
+                    </p>
+                    <p className="text-sm text-gray-600">Thivim,goa</p>
+                  </div>
                 </div>
-                <p className="text-primary">Sold 1 batch</p>
-              </div>
+                <p className="text-primary">30 reports</p>
+              </div> 
               <div className="flex flex-[1] justify-between items-center bg-secondary rounded-xl p-4 space-x-4 font-medium">
                 <div className="space-x-2 flex items-center">
                   <Icon
-                    icon="material-symbols:supervised-user-circle"
-                    className="text-primary"
-                    height={30}
+                    icon="mdi:virus-outline"
+                    height={50}
+                    className="text-red-600"
                   />
-                  <p>Mangesh Distribution</p>
+                  <div className="">
+                    <p className="text-base font-semibold text-gray-600">
+                      Mangesh Distribution
+                    </p>
+                    <p className="text-sm text-gray-600">Thivim,goa</p>
+                  </div>
                 </div>
-                <p className="text-primary">Sold 1 batch</p>
-              </div>
+                <p className="text-primary">30 reports</p>
+              </div> 
             </div>
-          </div>
-          <div className="w-full bg-secondary rounded-xl p-4">
-            <table className="w-full text-center ">
-              <thead className="text-primary font-medium">
-                <tr>
-                  <td>Date</td>
-                  <td>Time</td>
-                  <td>BatchID</td>
-                  <td>Batch Size</td>
-                  <td>Transfer</td>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr className="border-b   ">
-                  <td className="py-2">12 Mar 23</td>
-                  <td>17:00</td>
-                  <td>2404</td>
-                  <td>10</td>
-                  <td>
-                    <button
-                      onClick={() =>
-                        setTransferModalToggle(!transferModalToggle)
-                      }
-                    >
-                      <Icon
-                        icon="fluent:location-live-20-regular"
-                        height={30}
-                      />
-                    </button>
-                  </td>
-                </tr>
-                <tr className="border-b   ">
-                  <td className="py-2">12 Mar 23</td>
-                  <td>17:00</td>
-                  <td>2404</td>
-                  <td>10</td>
-                  <td>
-                    <button
-                      onClick={() =>
-                        setTransferModalToggle(!transferModalToggle)
-                      }
-                    >
-                      <Icon
-                        icon="fluent:location-live-20-regular"
-                        height={30}
-                      />
-                    </button>
-                  </td>
-                </tr>
-                <tr className="border-b   ">
-                  <td className="py-2">12 Mar 23</td>
-                  <td>17:00</td>
-                  <td>2404</td>
-                  <td>10</td>
-                  <td>
-                    <button
-                      onClick={() =>
-                        setTransferModalToggle(!transferModalToggle)
-                      }
-                    >
-                      <Icon
-                        icon="fluent:location-live-20-regular"
-                        height={30}
-                      />
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
           </div>
         </div>
         <div className="bg-white h-full rounded-xl w-[25%] p-5 space-y-4">
@@ -227,48 +138,30 @@ const Dashboard = () => {
             <h3 className=" font-semibold">Chicken Flue Alerts</h3>
             <Icon icon="solar:danger-triangle-linear" height={80} />
             <p className=" text-xs text-center font-medium">
-              Possible flue spread from your farm please test chickens and
-              submit report
+              Increasing reports at mahesh poultry farm
             </p>
             <Button
               onClick={() => settoggle(true)}
-              value="Submit report"
+              value="Take Action"
               rounded="rounded-full"
               text="text-xs"
             />
           </div>
-          <div className="bg-secondary p-5 rounded-xl flex space-x-2 text-primary items-center ">
+          <div className="bg-secondary p-5 rounded-xl  text-primary items-center space-y-2">
             {" "}
-            <Icon icon="tabler:device-camera-phone" height={30} />
-            <h2 className="font-semibold">Device Connected</h2>
-          </div>
-          <div className="bg-secondary p-5 rounded-xl space-y-4 flex flex-col items-center">
-            <h2 className="text-primary font-semibold">Create Batch</h2>
-            <div className="flex p-2 bg-white rounded-full justify-between items-center space-x-2 text-primary">
-              <button>
-                {" "}
-                <Icon icon="mdi:plus-circle-outline" height={20} />
-              </button>{" "}
-              <input
-                type="number"
-                placeholder="No. of Chickens"
-                className="w-full hover:outline-none focus:outline-none "
+            <h2 className="font-semibold">Submitted report ML predictions</h2>
+            <div className="flex space-x-2 text-red-600">
+              <Icon
+                icon="solar:danger-triangle-linear"
+                height={80}
+                className="text-red-600"
               />
-              <button>
-                {" "}
-                <Icon icon="mdi:minus-circle-outline" height={20} />
-              </button>{" "}
+              <div className="space-y-2">
+                <p className="text-2xl font-bold">Mahesh Farm</p>
+                <p>ML results Positive for Avian Influenza</p>
+                <button className="bg-red-600 p-2 rounded-full w-full text-white">Mark as Affected</button>
+              </div>
             </div>
-            <Button
-              value="Create Batch"
-              rounded="rounded-full"
-              text="text-md"
-              fullWidth
-              onClick={() => {}}
-            />
-            <Icon icon="bi:qr-code" height={100} className="text-primary" />
-
-            <Button value="Print" rounded="rounded-full" text="text-xs" onClick={()=>{}}/>
           </div>
         </div>
       </div>
