@@ -7,14 +7,13 @@ import BarChart from "@/features/ui/BarChart/BarChart";
 import { useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 
-//assets
-import TapPay from "@assets/Images/tap-transfer.png";
-import Map from "@/ui/Map/Map";
+import HealthSidebar from "@/features/ui/HealthSidebar/HealthSidebar";
+import Sidebar from "@/features/ui/Sidebar/Sidebar";
 const Dashboard = () => {
   let links = [
     {
       name: "Dashboard",
-      path: "/health-worker",
+      path: "/health-dashboard",
       icon: "material-symbols:space-dashboard-rounded",
     },
     {
@@ -37,50 +36,7 @@ const Dashboard = () => {
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
-      <div className="w-1/6 p-7 flex flex-col justify-between ">
-        <div className="space-y-10">
-          <div className=" h-15 w-40">
-            <Link href={"/"}>
-              <Image src={Logo} alt="" />
-            </Link>
-          </div>
-          <div className="flex flex-col space-y-2">
-            <Link
-              href={"/dashboard"}
-              className="bg-white p-3 text-primary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon
-                icon="material-symbols:space-dashboard-rounded"
-                height={20}
-              />{" "}
-              <p>Dashboard</p>
-            </Link>
-            <Link
-              href={"/inventory"}
-              className=" p-3 text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon icon="material-symbols:inventory-2" height={20} />{" "}
-              <p>Reports</p>
-            </Link>
-          </div>
-        </div>
-
-        <div className="flex flex-col space-y-4 text-textSecondary font-medium">
-          <Link
-            href={"#"}
-            className=" text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="material-symbols:settings" height={20} />{" "}
-            <p>Settings</p>
-          </Link>
-          <Link
-            href={"/auth/signin"}
-            className="  text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="ic:baseline-log-out" height={20} /> <p>Logout</p>
-          </Link>
-        </div>
-      </div>
+      <Sidebar links={links} />
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
@@ -101,9 +57,9 @@ const Dashboard = () => {
                   <td>10</td>
                   <td>
                     {" "}
-                    <button onClick={() => settoggle(!toggle)}>
+                    <Link href={"/report-details"}>
                       <Icon icon="iconoir:reports" height={30} />
-                    </button>
+                    </Link>
                   </td>
                 </tr>
               </tbody>

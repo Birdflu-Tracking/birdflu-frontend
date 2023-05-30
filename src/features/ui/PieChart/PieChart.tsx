@@ -44,23 +44,21 @@ const renderCustomizedLabel = ({
 };
 
 export default class PieChart extends PureComponent {
-  static demoUrl =
-    "https://codesandbox.io/s/pie-chart-with-customized-label-dlhhj";
 
   render() {
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <PC width={500} height={500}>
+        <PC >
           <Pie
             data={data}
-            cx="50%"
-            cy="50%"
+            // cx="100%"
+            // cy="50%"
             labelLine={false}
             // label={renderCustomizedLabel}
-            outerRadius={80}
+            outerRadius={100}
             fill="#8884d8"
             dataKey="value"
-            label
+            
           >
             {data.map((entry, index) => (
               <Cell

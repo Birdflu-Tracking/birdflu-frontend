@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  LabelList,
 } from "recharts";
 
 const data = [
@@ -59,17 +60,20 @@ const data = [
     uv: 3490,
     pv: 4300,
     amt: 2100,
-  },{
+  },
+  {
     name: "Page G",
     uv: 3490,
     pv: 4300,
     amt: 2100,
-  },{
+  },
+  {
     name: "Page G",
     uv: 3490,
     pv: 4300,
     amt: 2100,
-  },{
+  },
+  {
     name: "Page G",
     uv: 3490,
     pv: 4300,
@@ -80,11 +84,45 @@ const data = [
 export default function BarChart() {
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <BC width={150} height={40} data={data}>
-        <Bar dataKey="uv" fill="#993E3A" opacity={0.2} radius={100}>
-          <h1>2</h1>
+      <BC width={150}  data={data}>
+        <Bar
+          dataKey="uv"
+          fill="#993E3A"
+          opacity={0.2}
+          radius={100}
+          barSize={50}
+          label={{
+            position: "center",
+            angle: -90,
+            fill: "#993E3A",
+            offset: 25,
+          }}
+        >
+          {/* <LabelList dataKey="uv" />
+          {data.map((entry, index) => (
+            <Cell key={`cell-${index}`} />
+          ))}{" "} */}
         </Bar>
       </BC>
     </ResponsiveContainer>
   );
 }
+const CustomizedTooltip = ({ active, payload, label }) => {
+  console.log(active, payload, label);
+
+  if (active) {
+    return (
+      <div className="chart-tooltip">
+        <div className="">
+          <span>Original: {payload[0].name}</span>
+          <span>{payload[0].payload.call_time}</span>
+        </div>
+        <div className="">
+          <span>Compared</span>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
+};

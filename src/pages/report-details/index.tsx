@@ -10,19 +10,10 @@ import Multiselect from "multiselect-react-dropdown";
 //assets
 import TapPay from "@assets/Images/tap-transfer.png";
 import Map from "@/ui/Map/Map";
+import HealthSidebar from "@/features/ui/HealthSidebar/HealthSidebar";
+import Sidebar from "@/features/ui/Sidebar/Sidebar";
 const Dashboard = () => {
-  let links = [
-    {
-      name: "Dashboard",
-      path: "/health-worker",
-      icon: "material-symbols:space-dashboard-rounded",
-    },
-    {
-      name: "Reports",
-      path: "/health-reports",
-      icon: "material-symbols:inventory-2",
-    },
-  ];
+
   const [toggle, settoggle] = useState(false);
   const state = {
     options: [
@@ -33,54 +24,22 @@ const Dashboard = () => {
       { name: "Narrowness of eyes", id: 5 },
     ],
   };
-
+  let links = [
+    {
+      name: "Dashboard",
+      path: "/health-dashboard",
+      icon: "material-symbols:space-dashboard-rounded",
+    },
+    {
+      name: "Reports",
+      path: "/health-reports",
+      icon: "material-symbols:inventory-2",
+    },
+  ];
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
-      <div className="w-1/6 p-7 flex flex-col justify-between ">
-        <div className="space-y-10">
-          <div className=" h-15 w-40">
-            <Link href={"/"}>
-              <Image src={Logo} alt="" />
-            </Link>
-          </div>
-          <div className="flex flex-col space-y-2">
-            <Link
-              href={"/dashboard"}
-              className="bg-white p-3 text-primary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon
-                icon="material-symbols:space-dashboard-rounded"
-                height={20}
-              />{" "}
-              <p>Dashboard</p>
-            </Link>
-            <Link
-              href={"/inventory"}
-              className=" p-3 text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon icon="material-symbols:inventory-2" height={20} />{" "}
-              <p>Reports</p>
-            </Link>
-          </div>
-        </div>
-
-        <div className="flex flex-col space-y-4 text-textSecondary font-medium">
-          <Link
-            href={"#"}
-            className=" text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="material-symbols:settings" height={20} />{" "}
-            <p>Settings</p>
-          </Link>
-          <Link
-            href={"/auth/signin"}
-            className="  text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="ic:baseline-log-out" height={20} /> <p>Logout</p>
-          </Link>
-        </div>
-      </div>
+      <Sidebar links={links} />
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-full rounded-xl p-10 space-y-4">
@@ -95,27 +54,27 @@ const Dashboard = () => {
               <div className=" flex-1">
                 <div className="space-y-10">
                   <div className="space-y-2">
-                      <h1 className=" font-bold text-xl">About poultry shop </h1>
-                      <div className="space-y-2">
-                        <div className="">
-                          <h2 className="font-medium text-lg">Name</h2>
-                          <h5 className="fontu-normal text-lg text-gray-500">
-                            Rajesh poultry Shop
-                          </h5>
-                        </div>{" "}
-                        <div className="">
-                          <h2 className="font-medium text-lg">Owner Name</h2>
-                          <h5 className="fontu-normal text-lg text-gray-500">
-                            Rajesh Naik{" "}
-                          </h5>
-                        </div>{" "}
-                        <div className="">
-                          <h2 className="font-medium text-lg">Phone Number</h2>
-                          <h5 className="fontu-normal text-lg text-gray-500">
-                            915846205{" "}
-                          </h5>
-                        </div>{" "}
-                      </div>
+                    <h1 className=" font-bold text-xl">About poultry shop </h1>
+                    <div className="space-y-2">
+                      <div className="">
+                        <h2 className="font-medium text-lg">Name</h2>
+                        <h5 className="fontu-normal text-lg text-gray-500">
+                          Rajesh poultry Shop
+                        </h5>
+                      </div>{" "}
+                      <div className="">
+                        <h2 className="font-medium text-lg">Owner Name</h2>
+                        <h5 className="fontu-normal text-lg text-gray-500">
+                          Rajesh Naik{" "}
+                        </h5>
+                      </div>{" "}
+                      <div className="">
+                        <h2 className="font-medium text-lg">Phone Number</h2>
+                        <h5 className="fontu-normal text-lg text-gray-500">
+                          915846205{" "}
+                        </h5>
+                      </div>{" "}
+                    </div>
                   </div>
                   <div className="">
                     <h1 className=" font-bold text-xl">About Root Famer </h1>
@@ -153,10 +112,18 @@ const Dashboard = () => {
                   </div>{" "}
                   <div className="">
                     <h2 className="font-medium text-lg">
-                      Farmer report result
+                      Farmer report ML result
                     </h2>
                     <h5 className="fontu-normal text-lg text-gray-500">
-                      Rajesh Naik{" "}
+                      Avian Influenza
+                    </h5>
+                  </div>{" "}
+                  <div className="">
+                    <h2 className="font-medium text-lg">
+                      Report Request Status
+                    </h2>
+                    <h5 className="fontu-normal text-lg text-gray-500">
+                      Not requested{" "}
                     </h5>
                   </div>{" "}
                   <div className="">

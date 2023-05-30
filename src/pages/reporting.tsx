@@ -79,7 +79,7 @@ export default function Reporting() {
 
                 label: "Phone Number",
                 placeholder: "Enter your phone number",
-                type: "number",
+                type: "tel",
               },
               {
                 dataName: "poultryShop",
@@ -103,6 +103,7 @@ export default function Reporting() {
               }) => {
                 return (
                   <FormInput
+                  
                     required
                     label={item.label}
                     placeholder={item.placeholder}

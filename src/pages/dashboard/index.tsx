@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import Logo from "@assets/logo/logo.svg";
 import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
 import BarChart from "@/features/ui/BarChart/BarChart";
@@ -9,8 +8,12 @@ import Multiselect from "multiselect-react-dropdown";
 
 //assets
 import TapPay from "@assets/Images/tap-transfer.png";
+import Sidebar from "@/features/ui/Sidebar/Sidebar";
+import axios from "axios";
 const Dashboard = () => {
-  let links = [
+  const [batchSize, setBatchSize] = useState(0);
+  const [deviceStatus, setDeviceStatus] = useState(false);
+  const links = [
     {
       name: "Dashboard",
       path: "/dashboard",
@@ -33,54 +36,13 @@ const Dashboard = () => {
       { name: "Narrowness of eyes", id: 5 },
     ],
   };
-
+  function handleBatchCreation(){
+    axios.post('http://localhost:5000/api/user/create/batch',{})
+  }
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
-      <div className="w-1/6 p-7 flex flex-col justify-between ">
-        <div className="space-y-10">
-          <div className=" h-15 w-40">
-            <Link href={"/"}>
-              <Image src={Logo} alt="" />
-            </Link>
-          </div>
-          <div className="flex flex-col space-y-2">
-            <Link
-              href={"/dashboard"}
-              className="bg-white p-3 text-primary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon
-                icon="material-symbols:space-dashboard-rounded"
-                height={20}
-              />{" "}
-              <p>Dashboard</p>
-            </Link>
-            <Link
-              href={"/inventory"}
-              className=" p-3 text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon icon="material-symbols:inventory-2" height={20} />{" "}
-              <p>Inventory</p>
-            </Link>
-          </div>
-        </div>
-
-        <div className="flex flex-col space-y-4 text-textSecondary font-medium">
-          <Link
-            href={"#"}
-            className=" text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="material-symbols:settings" height={20} />{" "}
-            <p>Settings</p>
-          </Link>
-          <Link
-            href={"/auth/signin"}
-            className="  text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="ic:baseline-log-out" height={20} /> <p>Logout</p>
-          </Link>
-        </div>
-      </div>
+      <Sidebar links={links} />
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
@@ -88,16 +50,16 @@ const Dashboard = () => {
             <h5 className="text-primary text-lg font-semibold">Dashboard</h5>
             <p className="text-base font-semibold">Hi Sanket ProFarmer</p>
           </div>
-          <div className="h-[45%] flex space-x-4">
-            <div className="bg-primary/10 rounded-xl p-5 flex-[1] space-y-2">
+          <div className="h-[35%] flex space-x-4">
+            <div className="bg-primary/10 rounded-xl p-5 flex-[1] space-y-2 flex flex-col">
               <h1
-                className="text-primary text-2xl font-semibold
+                className="text-primary text-2xl font-semibold flex-1
               "
               >
                 <span className="text-5xl font-bold">132</span> Chickens <br />{" "}
                 Sold this Month
               </h1>
-              <div className="w-full h-[250px]">
+              <div className="w-full flex-[2]">
                 <BarChart />
               </div>
             </div>
@@ -151,8 +113,9 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-          <div className="w-full bg-secondary rounded-xl p-4">
-            <table className="w-full text-center ">
+          <div className="w-full bg-secondary rounded-xl p-4 space-y-2">
+            <h1 className="text-xl font-medium text-primary">Recent Batches</h1>
+            <table className="w-full  ">
               <thead className="text-primary font-medium">
                 <tr>
                   <td>Date</td>
@@ -237,27 +200,34 @@ const Dashboard = () => {
               text="text-xs"
             />
           </div>
-          <div className="bg-secondary p-5 rounded-xl flex space-x-2 text-primary items-center ">
-            {" "}
-            <Icon icon="tabler:device-camera-phone" height={30} />
-            <h2 className="font-semibold">Device Connected</h2>
-          </div>
+          {deviceStatus ? (
+            <div className="bg-secondary p-5 rounded-xl flex space-x-2 text-primary items-center ">
+              {" "}
+              <Icon icon="tabler:device-camera-phone" height={30} />
+              <h2 className="font-semibold">Device Connected</h2>
+            </div>
+          ) : (
+            <div className="bg-secondary p-5 rounded-xl flex flex-col space-y-2 text-primary items-center ">
+              {" "}
+              <Icon icon="mdi:connection" height={100} />
+              <h2 className="font-semibold">Connect your hardware</h2>
+            </div>
+          )}
           <div className="bg-secondary p-5 rounded-xl space-y-4 flex flex-col items-center">
             <h2 className="text-primary font-semibold">Create Batch</h2>
-            <div className="flex p-2 bg-white rounded-full justify-between items-center space-x-2 text-primary">
-              <button>
-                {" "}
-                <Icon icon="mdi:plus-circle-outline" height={20} />
-              </button>{" "}
+            <div className="w-full flex p-2 bg-white rounded-full justify-between items-center space-x-2 text-primary">
+              <button onClick={() => setBatchSize((prev) => prev - 1)}>
+                <Icon icon="mdi:minus-circle-outline" height={20} />
+              </button>
               <input
                 type="number"
                 placeholder="No. of Chickens"
-                className="w-full hover:outline-none focus:outline-none "
+                className="w-[50px] hover:outline-none focus:outline-none "
+                value={batchSize}
               />
-              <button>
-                {" "}
-                <Icon icon="mdi:minus-circle-outline" height={20} />
-              </button>{" "}
+              <button onClick={() => setBatchSize((prev) => prev + 1)}>
+                <Icon icon="mdi:plus-circle-outline" height={20} />
+              </button>
             </div>
             <Button
               value="Create Batch"
@@ -266,9 +236,8 @@ const Dashboard = () => {
               fullWidth
               onClick={() => {}}
             />
-            <Icon icon="bi:qr-code" height={100} className="text-primary" />
 
-            <Button value="Print" rounded="rounded-full" text="text-xs" onClick={()=>{}}/>
+        
           </div>
         </div>
       </div>
@@ -281,7 +250,7 @@ const Dashboard = () => {
             >
               <Icon icon="ic:round-close" height={30} />
             </button>
-            <Image src={TapPay} height={150} width={150} />
+            <Image src={TapPay} height={150} width={150} alt="text" />
             <h1 className="text-textSecondary  text-center text-xl">
               Tap Your NFC card to transfer batch
             </h1>

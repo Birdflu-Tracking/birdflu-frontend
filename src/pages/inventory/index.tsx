@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
 import ChickenIcon from "@assets/Images/chicken-icon.svg";
 import PieChart from "@/features/ui/PieChart/PieChart";
+import Sidebar from "@/features/ui/Sidebar/Sidebar";
 const Inventory = () => {
   let links = [
     {
@@ -21,56 +22,14 @@ const Inventory = () => {
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
-      <div className="w-1/6 p-7 flex flex-col justify-between ">
-        <div className="space-y-10">
-          <div className=" h-15 w-40">
-            <Link href={"/"}>
-              <Image src={Logo} alt="" />
-            </Link>
-          </div>
-          <div className="flex flex-col space-y-2">
-            <Link
-              href={"/dashboard"}
-              className=" p-3 text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon
-                icon="material-symbols:space-dashboard-rounded"
-                height={20}
-              />
-              <p>Dashboard</p>
-            </Link>
-            <Link
-              href={"/inventory"}
-              className="bg-white p-3 text-primary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon icon="material-symbols:inventory-2" /> <p>Inventory</p>
-            </Link>
-          </div>
-        </div>
-
-        <div className="flex flex-col space-y-4 text-textSecondary font-medium">
-          <Link
-            href={"/inventory"}
-            className=" text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="material-symbols:settings" height={20} />{" "}
-            <p>Settings</p>
-          </Link>
-          <Link
-            href={"/inventory"}
-            className="  text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="ic:baseline-log-out" height={20} /> <p>Logout</p>
-          </Link>
-        </div>
-      </div>
+      <Sidebar links={links} />
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
           <h1 className="text-primary text-3xl font-bold">Inventory</h1>
-          <div className="p-5 text-center">
+          <div className="p-5 ">
             <table className="w-full ">
-              <thead className="text-primary font-medium">
+              <thead className="text-primary font-semibold text-xl">
                 <tr>
                   <td>Date</td>
                   <td>Time</td>
@@ -79,7 +38,7 @@ const Inventory = () => {
                   <td>Distributor</td>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="text-gray-500">
                 <tr className="border-b   ">
                   <td className="py-2">12 Mar 23</td>
                   <td>17:00</td>

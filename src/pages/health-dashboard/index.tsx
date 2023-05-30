@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import Logo from "@assets/logo/logo.svg";
 import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
 import BarChart from "@/features/ui/BarChart/BarChart";
@@ -10,21 +9,12 @@ import Multiselect from "multiselect-react-dropdown";
 //assets
 import TapPay from "@assets/Images/tap-transfer.png";
 import Map from "@/ui/Map/Map";
+import HealthSidebar from "@/features/ui/HealthSidebar/HealthSidebar";
+import Sidebar from "@/features/ui/Sidebar/Sidebar";
 const Dashboard = () => {
-  let links = [
-    {
-      name: "Dashboard",
-      path: "/health-worker",
-      icon: "material-symbols:space-dashboard-rounded",
-    },
-    {
-      name: "Reports",
-      path: "/health-reports",
-      icon: "material-symbols:inventory-2",
-    },
-  ];
   const [toggle, settoggle] = useState(false);
   const [transferModalToggle, setTransferModalToggle] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const state = {
     options: [
       { name: "Depression", id: 1 },
@@ -34,54 +24,22 @@ const Dashboard = () => {
       { name: "Narrowness of eyes", id: 5 },
     ],
   };
-
+  let links = [
+    {
+      name: "Dashboard",
+      path: "/health-dashboard",
+      icon: "material-symbols:space-dashboard-rounded",
+    },
+    {
+      name: "Reports",
+      path: "/health-reports",
+      icon: "material-symbols:inventory-2",
+    },
+  ];
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
-      <div className="w-1/6 p-7 flex flex-col justify-between ">
-        <div className="space-y-10">
-          <div className=" h-15 w-40">
-            <Link href={"/"}>
-              <Image src={Logo} alt="" />
-            </Link>
-          </div>
-          <div className="flex flex-col space-y-2">
-            <Link
-              href={"/dashboard"}
-              className="bg-white p-3 text-primary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon
-                icon="material-symbols:space-dashboard-rounded"
-                height={20}
-              />{" "}
-              <p>Dashboard</p>
-            </Link>
-            <Link
-              href={"/inventory"}
-              className=" p-3 text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-            >
-              <Icon icon="material-symbols:inventory-2" height={20} />{" "}
-              <p>Reports</p>
-            </Link>
-          </div>
-        </div>
-
-        <div className="flex flex-col space-y-4 text-textSecondary font-medium">
-          <Link
-            href={"#"}
-            className=" text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="material-symbols:settings" height={20} />{" "}
-            <p>Settings</p>
-          </Link>
-          <Link
-            href={"/auth/signin"}
-            className="  text-textSecondary font-medium rounded-lg flex flex-row space-x-2 items-center"
-          >
-            <Icon icon="ic:baseline-log-out" height={20} /> <p>Logout</p>
-          </Link>
-        </div>
-      </div>
+      <Sidebar links={links}/>
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
@@ -89,7 +47,63 @@ const Dashboard = () => {
             <h5 className="text-primary text-lg font-semibold">Dashboard</h5>
             <p className="text-base font-semibold">Hi Sanket ProFarmer</p>
           </div>
-          <div className="h-[350px] w-full rounded-xl overflow-hidden">
+          <div className="h-[350px] w-full rounded-xl overflow-hidden relative flex justify-center">
+            {showSearch ? (
+              <div className="absolute top-10 m-auto h-fit  bg-white z-10  rounded-xl shadow-md p-5 space-y-4">
+                <div className="space-y-2">
+                  <div className="flex gap-3">
+                    <div className="w-full bg-secondary rounded-md p-2 flex items-center gap-2">
+                      <Icon
+                        icon="ic:outline-search"
+                        height={20}
+                        className="text-gray-600"
+                      />
+                      <input
+                        type="text"
+                        className="bg-transparent  outline-none italic"
+                        placeholder="Search Location"
+                      />
+                    </div>
+                    <button onClick={() => setShowSearch(false)}>
+                      <Icon
+                        icon="ic:round-close"
+                        height={25}
+                        className="text-gray-600"
+                      />
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <h5 className="bg-primary px-3 py-1 text-white rounded-full">
+                      Poultry Shops
+                    </h5>
+                    <h5 className="bg-primary px-3 py-1 text-white rounded-full">
+                      Farms
+                    </h5>
+                    <h5 className="bg-primary px-3 py-1 text-white rounded-full">
+                      Distributors
+                    </h5>
+                  </div>
+                </div>
+                {/* list */}
+                <div className="space-y-1">
+                  <h1 className="font-medium text-base ">Manoj Chicken Shop</h1>
+                  <p className=" text-sm text-gray-500">
+                    Near blue dart office, khorlim,mapusa goa
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <button
+                className="absolute bg-white shadow-md rounded-md p-2 flex items-center right-5 top-5 z-10"
+                onClick={() => setShowSearch(true)}
+              >
+                <Icon
+                  icon="ic:outline-search"
+                  height={20}
+                  className="text-gray-600"
+                />
+              </button>
+            )}
             <Map />
           </div>
           <div className="h-[300px] w-full rounded-xl bg-primary/10 p-4">
@@ -113,7 +127,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <p className="text-primary">30 reports</p>
-              </div> 
+              </div>
               <div className="flex flex-[1] justify-between items-center bg-secondary rounded-xl p-4 space-x-4 font-medium">
                 <div className="space-x-2 flex items-center">
                   <Icon
@@ -129,7 +143,7 @@ const Dashboard = () => {
                   </div>
                 </div>
                 <p className="text-primary">30 reports</p>
-              </div> 
+              </div>
             </div>
           </div>
         </div>
@@ -159,7 +173,9 @@ const Dashboard = () => {
               <div className="space-y-2">
                 <p className="text-2xl font-bold">Mahesh Farm</p>
                 <p>ML results Positive for Avian Influenza</p>
-                <button className="bg-red-600 p-2 rounded-full w-full text-white">Mark as Affected</button>
+                <button className="bg-red-600 p-2 rounded-full w-full text-white">
+                  Mark as Affected
+                </button>
               </div>
             </div>
           </div>
