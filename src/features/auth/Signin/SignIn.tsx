@@ -7,16 +7,27 @@ import Graphic from "@assets/Images/Topographic.svg";
 import Graphic1 from "@assets/Images/kombdi.svg";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import axios from "axios";
 
 const SignIn = () => {
   const [userType, setUserType] = useState<any>("farmer");
   const [contact, setContact] = useState<any>(undefined);
   const [otp, setOtp] = useState<any>(undefined);
   const [errors, setErrors] = useState<string>("");
-  function handleSignin() {
+  async function handleSignin() {
     let regex = /^[7-9][0-9]{9}$/;
     if (userType && contact && otp) {
       console.log(userType, contact, otp);
+      await axios
+        .post(
+          "http://localhost:8080/api/auth/login",
+          {},
+          { withCredentials: true }
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => console.log(err));
       if (regex.test(contact)) {
       } else {
         setErrors("Enter Valid Phone Number");
