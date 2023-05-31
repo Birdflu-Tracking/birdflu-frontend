@@ -8,24 +8,33 @@ import Graphic1 from "@assets/Images/kombdi.svg";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
+import { useRouter } from "next/router";
 
 const SignIn = () => {
   const [userType, setUserType] = useState<any>("farmer");
   const [contact, setContact] = useState<any>(undefined);
   const [otp, setOtp] = useState<any>(undefined);
   const [errors, setErrors] = useState<string>("");
+  const router = useRouter();
   async function handleSignin() {
     let regex = /^[7-9][0-9]{9}$/;
+    let user = undefined;
+    if (userType == "farmer") {
+      user = "farmer_user323948";
+    } else if (userType == "distributor") {
+      user = "distributor_user323948";
+    }
     if (userType && contact && otp) {
       console.log(userType, contact, otp);
       await axios
         .post(
           "http://localhost:8080/api/auth/login",
-          {},
+          { firebaseAuthUid: user },
           { withCredentials: true }
         )
         .then((res) => {
           console.log(res.data);
+          router.push("/dashboard");
         })
         .catch((err) => console.log(err));
       if (regex.test(contact)) {
