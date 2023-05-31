@@ -5,8 +5,10 @@ import Button from "@/ui/Button/Button";
 import BarChart from "@/features/ui/BarChart/BarChart";
 import { useEffect, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
+import { ToastContainer, toast } from "react-toastify";
 
 //assets
+import "react-toastify/dist/ReactToastify.css";
 import TapPay from "@assets/Images/tap-transfer.png";
 import axios from "axios";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
@@ -14,6 +16,20 @@ import Sidebar from "@/features/ui/Sidebar/Sidebar";
 type WsResponse = {
   message: string;
   type: Number;
+};
+
+export type Batch = {
+  batchSize: number;
+  batchId: string;
+  createdAt: {
+    _nanoseconds: number;
+    _seconds: number;
+  };
+  farmerId: string;
+  distributorId: string;
+  sellerId: string;
+  infected: boolean;
+  currentOwner: any;
 };
 
 const Dashboard = () => {
@@ -35,8 +51,10 @@ const Dashboard = () => {
   const [transferModalToggle, setTransferModalToggle] = useState(false);
   const [batchCreationLoading, setBatchCreationLoading] = useState(false);
   const [birdFluWs, setWS] = useState<WebSocket | null>(null);
-  const [tm, setTm] = useState<NodeJS.Timeout>();
-  const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
+  const [batches, setBatches] = useState<Array<Batch> | null>(null);
+  const [currentBatch, setCurrentBatch] = useState<string | null>(null);
+  // const [tm, setTm] = useState<NodeJS.Timeout>();
+  // const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
 
   const state = {
     options: [
@@ -48,56 +66,34 @@ const Dashboard = () => {
     ],
   };
 
-  // For timeout
-  const ping = () => {
-    if (birdFluWs?.OPEN) {
-      birdFluWs?.send("__ping__");
-      const tm = setTimeout(function () {
-        birdFluWs?.close();
-      }, 5000);
-      setTm(tm);
-    } else {
-      startConn();
-    }
-  };
-
-  const pong = () => {
-    clearTimeout(tm);
-  };
-
   const handleMessage = async (msg: WsResponse) => {
-    if (msg.message == "__pong__") {
-      pong();
-    }
-
     switch (msg.type) {
       case 0:
         console.log(msg.message);
+        toast(`Device: ${msg.message}`);
         break;
       case 1:
         // await axios.post(`http://localhost:8080/api/user/transfer/batch`, {
-        //   "batchId": "FGYkgUxh2WMxlF6lMLyw",
-        //   "distributorId": null,
-        //   "sellerId": null
+        //   batchId: currentBatch,
+        //   distributorId: msg.message,
+        //   sellerId: null,
         // });
         console.log(msg.message);
+        toast(`Device: ${msg.message}`);
         break;
     }
   };
 
-  const handleTransferRead = () => {
+  const handleTransferRead = (batchId: string) => {
     if (birdFluWs?.OPEN) {
       console.log("Reading");
       birdFluWs.send("read");
+      setCurrentBatch(batchId);
     }
   };
 
   const handleOpen = (ws: WebSocket) => {
     setWS(ws);
-    if (pingInterval) {
-      clearInterval(pingInterval);
-    }
-    setPingInterval(setInterval(ping, 30000));
   };
 
   const startConn = () => {
@@ -112,8 +108,21 @@ const Dashboard = () => {
     WebSocket;
   };
 
+  const getBatches = async () => {
+    await axios
+      .get("http://localhost:8080/api/user/batches", { withCredentials: true })
+      .then((res) => {
+        console.log(res.data);
+        setBatches(res.data.batches);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     startConn();
+    getBatches();
   }, []);
 
   const handleBatchCreation = () => {
@@ -228,61 +237,53 @@ const Dashboard = () => {
               </thead>
 
               <tbody>
-                <tr className="border-b   ">
-                  <td className="py-2">12 Mar 23</td>
-                  <td>17:00</td>
-                  <td>2404</td>
-                  <td>10</td>
-                  <td>
-                    <button
-                      onClick={() => {
-                        setTransferModalToggle(!transferModalToggle);
-                        handleTransferRead();
-                      }}
-                    >
-                      <Icon
-                        icon="fluent:location-live-20-regular"
-                        height={30}
-                      />
-                    </button>
-                  </td>
-                </tr>
-                <tr className="border-b   ">
-                  <td className="py-2">12 Mar 23</td>
-                  <td>17:00</td>
-                  <td>2404</td>
-                  <td>10</td>
-                  <td>
-                    <button
-                      onClick={() =>
-                        setTransferModalToggle(!transferModalToggle)
-                      }
-                    >
-                      <Icon
-                        icon="fluent:location-live-20-regular"
-                        height={30}
-                      />
-                    </button>
-                  </td>
-                </tr>
-                <tr className="border-b   ">
-                  <td className="py-2">12 Mar 23</td>
-                  <td>17:00</td>
-                  <td>2404</td>
-                  <td>10</td>
-                  <td>
-                    <button
-                      onClick={() => {
-                        setTransferModalToggle(!transferModalToggle);
-                      }}
-                    >
-                      <Icon
-                        icon="fluent:location-live-20-regular"
-                        height={30}
-                      />
-                    </button>
-                  </td>
-                </tr>
+                {batches ? (
+                  batches.map((batch: Batch, index) => {
+                    return (
+                      <tr className="border-b   " key={index}>
+                        <td className="py-2">
+                          {new Date(batch.createdAt._seconds * 1000)
+                            .toString()
+                            .split(" ")[2] +
+                            "-" +
+                            new Date(batch.createdAt._seconds * 1000)
+                              .toString()
+                              .split(" ")[1] +
+                            "-" +
+                            new Date(batch.createdAt._seconds * 1000)
+                              .toString()
+                              .split(" ")[3]}
+                        </td>
+                        <td>
+                          {
+                            new Date(batch.createdAt._seconds * 1000)
+                              .toString()
+                              .split(" ")[4]
+                          }
+                        </td>
+                        <td>{batch.batchId}</td>
+                        <td>{batch.batchSize}</td>
+                        <td>
+                          <button
+                            onClick={() => {
+                              setTransferModalToggle(!transferModalToggle);
+                              handleTransferRead(batch.batchId);
+                            }}
+                          >
+                            <Icon
+                              icon="fluent:location-live-20-regular"
+                              height={30}
+                            />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td>No Batches</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -313,7 +314,7 @@ const Dashboard = () => {
                 ? "Connected"
                 : birdFluWs?.readyState == 2
                 ? "Closing"
-                : "Closed"}
+                : "Disconnected"}
             </h2>
           </div>
           <div className="bg-secondary p-5 rounded-xl space-y-4 flex flex-col items-center">
@@ -338,8 +339,15 @@ const Dashboard = () => {
               rounded="rounded-full"
               text="text-md"
               fullWidth
-              onClick={() => handleBatchCreation()}
-              disabled={batchCreationLoading === true}
+              onClick={() => {}}
+            />
+
+        
+            <Button
+              value="Print"
+              rounded="rounded-full"
+              text="text-xs"
+              onClick={() => {}}
             />
           </div>
         </div>
@@ -402,6 +410,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+      <ToastContainer toastStyle={{ backgroundColor: "#FFFFFF" }} />
     </div>
   );
 };
