@@ -95,7 +95,7 @@ const Inventory = () => {
               <h5 className="text-4xl text-primary font-bold">100</h5>
             </div>
             <div className="self-end">
-              <Image src={ChickenIcon} />
+              <Image src={ChickenIcon} alt="test"/>
             </div>
           </div>{" "}
           <div className="bg-secondary rounded-xl p-4 flex justify-between">
