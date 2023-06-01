@@ -53,6 +53,7 @@ const Dashboard = () => {
   const [birdFluWs, setWS] = useState<WebSocket | null>(null);
   const [batches, setBatches] = useState<Array<Batch> | null>(null);
   const [currentBatch, setCurrentBatch] = useState<string | null>(null);
+  const [nfcCode, setNfcCode] = useState<any>(undefined);
   // const [tm, setTm] = useState<NodeJS.Timeout>();
   // const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
 
@@ -73,25 +74,40 @@ const Dashboard = () => {
         toast(`Device: ${msg.message}`);
         break;
       case 1:
-        // await axios.post(`http://localhost:8080/api/user/transfer/batch`, {
-        //   batchId: currentBatch,
-        //   distributorId: msg.message,
-        //   sellerId: null,
-        // });
-        console.log(msg.message);
-        toast(`Device: ${msg.message}`);
+        setNfcCode(msg.message);
         break;
     }
   };
 
   const handleTransferRead = (batchId: string) => {
-    if (birdFluWs?.OPEN) {
+    setCurrentBatch(batchId);
+  };
+  useEffect(() => {
+    if (birdFluWs?.OPEN && currentBatch) {
       console.log("Reading");
       birdFluWs.send("read");
-      setCurrentBatch(batchId);
     }
-  };
+  }, [currentBatch]);
 
+  useEffect(() => {
+    if (nfcCode) {
+      console.log(nfcCode, currentBatch);
+      axios
+        .post(
+          `http://localhost:8080/api/user/transfer/batch`,
+          {
+            batchId: currentBatch,
+            nfcCode: nfcCode,
+          },
+          { withCredentials: true }
+        )
+        .then(() => {
+          setTransferModalToggle(false)
+          getBatches()
+          toast(`Batch ${currentBatch} transfered`);
+        });
+    }
+  }, [nfcCode]);
   const handleOpen = (ws: WebSocket) => {
     setWS(ws);
   };
@@ -129,8 +145,15 @@ const Dashboard = () => {
     if (batchSize > 0) {
       setBatchCreationLoading(true);
       axios
-        .post("http://localhost:8080/api/user/create/batch", { batchSize })
-        .then((d) => {
+        .post(
+          "http://localhost:8080/api/user/create/batch",
+          { batchSize },
+          { withCredentials: true }
+        )
+        .then((res) => {
+          getBatches();
+          //@ts-ignore
+          // setBatches((prev) => [res.data.data, ...prev]);
           setBatchCreationLoading(false);
         })
         .catch((err) => {
@@ -139,16 +162,16 @@ const Dashboard = () => {
         });
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     axios
-    .post("http://localhost:8080/api/auth/login")
-    .then((d) => {
-      console.log(d)
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  },[])
+      .post("http://localhost:8080/api/auth/login")
+      .then((d) => {
+        console.log(d);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
@@ -339,15 +362,7 @@ const Dashboard = () => {
               rounded="rounded-full"
               text="text-md"
               fullWidth
-              onClick={() => {}}
-            />
-
-        
-            <Button
-              value="Print"
-              rounded="rounded-full"
-              text="text-xs"
-              onClick={() => {}}
+              onClick={() => handleBatchCreation()}
             />
           </div>
         </div>

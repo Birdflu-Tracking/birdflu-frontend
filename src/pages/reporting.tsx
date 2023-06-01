@@ -34,7 +34,7 @@ export default function Reporting() {
     ) {
       setLoading(true)
       axios
-        .post("http://192.168.8.30:8080/open/submit-flu-report", {
+        .post("http://localhost:8080/open/submit-flu-report", {
           reporterName: data.fullName,
           phoneNumber: data.contact,
           address: data.address,
