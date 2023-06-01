@@ -9,38 +9,26 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/router";
-
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/config/firebaseback.config";
 const SignIn = () => {
   const [userType, setUserType] = useState<any>("farmer");
-  const [contact, setContact] = useState<any>(undefined);
-  const [otp, setOtp] = useState<any>(undefined);
+  const [email, setEmail] = useState<any>(undefined);
+  const [password, setpassword] = useState<any>(undefined);
   const [errors, setErrors] = useState<string>("");
   const router = useRouter();
   async function handleSignin() {
-    let regex = /^[7-9][0-9]{9}$/;
-    let user = undefined;
-    if (userType == "farmer") {
-      user = "farmer_user323948";
-    } else if (userType == "distributor") {
-      user = "distributor_user323948";
-    }
-    if (userType && contact && otp) {
-      console.log(userType, contact, otp);
+    if (userType && email && password) {
+      console.log(userType, email, password);
+      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      const idToken = await user.getIdToken();
       await axios
-        .post(
-          "http://localhost:8080/api/auth/login",
-          { firebaseAuthUid: user },
-          { withCredentials: true }
-        )
+        .post("http://10.1.15.71:8080/api/auth/login", { idToken })
         .then((res) => {
           console.log(res.data);
           router.push("/dashboard");
         })
         .catch((err) => console.log(err));
-      if (regex.test(contact)) {
-      } else {
-        setErrors("Enter Valid Phone Number");
-      }
     }
   }
   useEffect(() => {
@@ -79,24 +67,23 @@ const SignIn = () => {
             onSubmit={(e) => e.preventDefault()}
           >
             <div className="flex flex-col space-y-2">
-              <label htmlFor="">Phone number</label>
+              <label htmlFor="">Email</label>
               <input
-                type="tel"
+                type="email"
                 className="rounded-md p-3 border border-black/10 focus:outline-none font-light"
-                placeholder="+91583452557"
-                onChange={(e) => setContact(e.target.value)}
+                // placeholder="+91583452557"
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
             <div className="flex flex-col space-y-2">
-              <label htmlFor="">OTP</label>
+              <label htmlFor="">password</label>
               <input
-                type="number"
+                type="text"
                 className="rounded-md p-3 border border-black/10 focus:outline-none font-light"
-                placeholder="Enter the 6 digit OTP"
-                onChange={(e) => setOtp(e.target.value)}
+                // placeholder="Enter the 6 digit password"
+                onChange={(e) => setpassword(e.target.value)}
                 required
-                maxLength={5}
               />
             </div>
             <Button
