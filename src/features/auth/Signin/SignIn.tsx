@@ -23,7 +23,11 @@ const SignIn = () => {
       const { user } = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await user.getIdToken();
       await axios
-        .post("http://10.1.15.71:8080/api/auth/login", { idToken })
+        .post(
+          "http://localhost:8080/api/auth/login",
+          { idToken },
+          { withCredentials: true }
+        )
         .then((res) => {
           console.log(res.data);
           router.push("/dashboard");

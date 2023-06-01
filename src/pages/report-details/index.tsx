@@ -13,7 +13,6 @@ import Map from "@/ui/Map/Map";
 import HealthSidebar from "@/features/ui/HealthSidebar/HealthSidebar";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 const Dashboard = () => {
-
   const [toggle, settoggle] = useState(false);
   const state = {
     options: [
@@ -36,6 +35,11 @@ const Dashboard = () => {
       icon: "material-symbols:inventory-2",
     },
   ];
+
+  const handleSendRequest = () => {
+    
+  };
+
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
@@ -127,7 +131,12 @@ const Dashboard = () => {
                     </h5>
                   </div>{" "}
                   <div className="">
-                    <button className="bg-red-600 p-2 rounded-full w-full text-white">
+                    <button
+                      className="bg-red-600 p-2 rounded-full w-full text-white"
+                      onClick={() => {
+                        handleSendRequest();
+                      }}
+                    >
                       Request A Report from farmer
                     </button>
                   </div>

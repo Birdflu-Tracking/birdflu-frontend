@@ -1,22 +1,30 @@
 import SearchIcon from "@mui/icons-material/Search";
 import { InputProps } from "@mui/material";
 import { DetailedHTMLProps, InputHTMLAttributes } from "react";
+import ReactSearchBox from "react-search-box";
+import Select from "react-select";
 
 interface FormInputPropType extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   type: string;
+  setSellerOption: any;
+  searchOptions: Array<{
+    key: string;
+    label: string;
+  }>;
 }
 
-export const FormInput = ({ label, type, ...rest }: FormInputPropType) => {
+export const FormInput = ({
+  label,
+  type,
+  setSellerOption,
+  searchOptions,
+  ...rest
+}: FormInputPropType) => {
   const SearchInputType = () => {
     return (
-      <div className="flex items-center p-2 h-12 border-2 border-light rounded-lg bg-labelBg">
-        <SearchIcon className="mr-2" />
-        <input
-          className="bg-transparent placeholder-lightPlaceholder-100 w-full focus:outline-none outline-none focus:bottom-0 bottom-0"
-          type={type}
-          {...rest}
-        />
+      <div className="rounded-lg bg-labelBg">
+        <Select options={searchOptions} onChange={setSellerOption} />
       </div>
     );
   };

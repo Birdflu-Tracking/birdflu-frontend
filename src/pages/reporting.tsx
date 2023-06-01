@@ -3,7 +3,9 @@ import Button from "@/ui/Button/Button";
 import { FormInput } from "@/ui/FormInput/FormInput";
 import { PrimaryButton } from "@/ui/PrimaryButton/PrimaryButton";
 import axios from "axios";
+import { error } from "console";
 import React, { use, useEffect, useState } from "react";
+
 import { v4 as uuidv4 } from "uuid";
 type ReportingDataType = {
   fullName: string | undefined;
@@ -13,7 +15,12 @@ type ReportingDataType = {
   symtompsStartDate: string | undefined;
 };
 export default function Reporting() {
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false);
+  const [sellers, setSellerShops] = useState([]);
+  const [selectedSeller, setSelectedSeller] = useState<{
+    key: string;
+    label: string;
+  } | null>(null);
   const [data, setData] = useState<ReportingDataType>({
     fullName: undefined,
     address: undefined,
@@ -22,7 +29,7 @@ export default function Reporting() {
     symtompsStartDate: undefined,
   });
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     console.log(data);
     if (
@@ -32,7 +39,7 @@ export default function Reporting() {
       data.poultryShop &&
       data.symtompsStartDate
     ) {
-      setLoading(true)
+      setLoading(true);
       axios
         .post("http://localhost:8080/open/submit-flu-report", {
           reporterName: data.fullName,
@@ -42,16 +49,38 @@ export default function Reporting() {
           symptomStartDate: data.symtompsStartDate,
         })
         .then(() => {
-          setLoading(false)
+          setLoading(false);
           console.log("success");
         })
         .catch(() => {
-          setLoading(false)
+          setLoading(false);
 
           console.log("failed");
         });
     }
   }
+
+  const getSellerShops = async () => {
+    axios
+      .get("http://localhost:8080/open/seller-shops")
+      .then((res) => {
+        console.log(res.data.sellers);
+        setSellerShops(res.data.sellers);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getSellerShops();
+  }, []);
+
+  useEffect(() => {
+    console.log(
+      `SELECTED_SELLER: ${selectedSeller ? selectedSeller.key : selectedSeller}`
+    );
+  }, [selectedSeller]);
   return (
     <>
       <Navbar />
@@ -75,13 +104,6 @@ export default function Reporting() {
                 type: "text",
               },
               {
-                dataName: "contact",
-
-                label: "Phone Number",
-                placeholder: "Enter your phone number",
-                type: "tel",
-              },
-              {
                 dataName: "poultryShop",
 
                 label: "Poultry shop",
@@ -94,6 +116,13 @@ export default function Reporting() {
                 placeholder: "",
                 type: "date",
               },
+              {
+                dataName: "contact",
+
+                label: "Phone Number",
+                placeholder: "Enter your phone number",
+                type: "tel",
+              },
             ].map(
               (item: {
                 dataName: string;
@@ -103,35 +132,38 @@ export default function Reporting() {
               }) => {
                 return (
                   <FormInput
-                  
                     required
                     label={item.label}
                     placeholder={item.placeholder}
+                    setSellerOption={setSelectedSeller}
                     type={item.type}
                     key={uuidv4()}
+                    searchOptions={sellers}
                     //@ts-ignore
                     onChange={(e) => {
                       setData((prev) => {
                         //@ts-ignore
                         var newdata = prev;
-                        console.log(prev)
+                        console.log(prev);
                         //@ts-ignore
                         newdata[item.dataName] = e.target.value;
-                        
-                          return newdata;
-                        
+
+                        return newdata;
                       });
                     }}
                   />
                 );
               }
             )}
+
             {/* Phone OTP */}
             <div className="flex">
               <FormInput
                 label="Verify Phone Number"
                 placeholder="Enter OTP"
+                setSellerOption={setSelectedSeller}
                 type="text"
+                searchOptions={sellers}
               />
               <PrimaryButton label="Send OTP" className={"ml-5 h-12 mt-auto"} />
             </div>
@@ -143,7 +175,7 @@ export default function Reporting() {
               value="Submit"
               rounded="rounded-md"
               onClick={(e) => handleSubmit(e)}
-              disabled={loading==true}
+              disabled={loading == true}
             />
           </div>
 

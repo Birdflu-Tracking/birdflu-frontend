@@ -153,7 +153,6 @@ const Dashboard = () => {
         .then((res) => {
           getBatches();
           //@ts-ignore
-          // setBatches((prev) => [res.data.data, ...prev]);
           setBatchCreationLoading(false);
         })
         .catch((err) => {
@@ -162,16 +161,7 @@ const Dashboard = () => {
         });
     }
   };
-  useEffect(() => {
-    axios
-      .post("http://localhost:8080/api/auth/login")
-      .then((d) => {
-        console.log(d);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
