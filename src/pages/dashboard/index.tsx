@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import TapPay from "@assets/Images/tap-transfer.png";
 import axios from "axios";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
+import Loading from "@/ui/LoadingScreen/Loading";
 
 type WsResponse = {
   message: string;
@@ -54,6 +55,7 @@ const Dashboard = () => {
   const [batches, setBatches] = useState<Array<Batch> | null>(null);
   const [currentBatch, setCurrentBatch] = useState<string | null>(null);
   const [nfcCode, setNfcCode] = useState<any>(undefined);
+  const [loading, setLoading] = useState(true);
   // const [tm, setTm] = useState<NodeJS.Timeout>();
   // const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
 
@@ -102,8 +104,8 @@ const Dashboard = () => {
           { withCredentials: true }
         )
         .then(() => {
-          setTransferModalToggle(false)
-          getBatches()
+          setTransferModalToggle(false);
+          getBatches();
           toast(`Batch ${currentBatch} transfered`);
         });
     }
@@ -130,6 +132,7 @@ const Dashboard = () => {
       .then((res) => {
         console.log(res.data);
         setBatches(res.data.batches);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
@@ -162,7 +165,9 @@ const Dashboard = () => {
     }
   };
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
       <Sidebar links={links} />
