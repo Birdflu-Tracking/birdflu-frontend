@@ -81,7 +81,7 @@ const Dashboard = () => {
                 {reportedSellers.length != 0
                   ? reportedSellers.map((reportedSeller) => (
                       <tr className="border-b   " key={reportedSeller.sellerId}>
-                        <td className="py-2">Rajesh Poultry</td>
+                        <td className="py-2">{reportedSeller.sellerName}</td>
                         <td>10</td>
                         <td>
                           {" "}
