@@ -24,13 +24,21 @@ const SignIn = () => {
       const idToken = await user.getIdToken();
       await axios
         .post(
-          "http://localhost:8080/api/auth/login",
+          `${
+            userType == "health-worker"
+              ? "http://localhost:8080/api/auth/login/health-worker"
+              : "http://localhost:8080/api/auth/login"
+          }`,
           { idToken },
           { withCredentials: true }
         )
         .then((res) => {
           console.log(res.data);
-          router.push("/dashboard");
+          if (userType == "health-worker") {
+            router.push("/health-dashboard")
+          } else {
+            router.push("/dashboard");
+          }
         })
         .catch((err) => console.log(err));
     }
@@ -62,6 +70,9 @@ const SignIn = () => {
               </option>
               <option value="distributor" className="p-5">
                 Distributor
+              </option>
+              <option value="health-worker" className="p-5">
+                Health Worker
               </option>
             </select>
           </div>

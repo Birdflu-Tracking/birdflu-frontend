@@ -1,3 +1,4 @@
+import { ReportingDataType } from "@/pages/reporting";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputProps } from "@mui/material";
 import { DetailedHTMLProps, InputHTMLAttributes } from "react";
@@ -8,6 +9,7 @@ interface FormInputPropType extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   type: string;
   setSellerOption: any;
+  setData: React.Dispatch<React.SetStateAction<ReportingDataType>>;
   searchOptions: Array<{
     key: string;
     label: string;
@@ -18,13 +20,27 @@ export const FormInput = ({
   label,
   type,
   setSellerOption,
+  setData,
   searchOptions,
   ...rest
 }: FormInputPropType) => {
   const SearchInputType = () => {
     return (
       <div className="rounded-lg bg-labelBg">
-        <Select options={searchOptions} onChange={setSellerOption} />
+        <Select
+          options={searchOptions}
+          onChange={(e) => {
+            setData((prev) => {
+              //@ts-ignore
+              var newdata = prev;
+              console.log(prev);
+              //@ts-ignore
+              newdata["poultryShop"] = e;
+
+              return newdata;
+            });
+          }}
+        />
       </div>
     );
   };

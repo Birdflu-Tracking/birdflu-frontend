@@ -7,11 +7,16 @@ import { error } from "console";
 import React, { use, useEffect, useState } from "react";
 
 import { v4 as uuidv4 } from "uuid";
-type ReportingDataType = {
+export type ReportingDataType = {
   fullName: string | undefined;
   address: string | undefined;
   contact: string | undefined;
-  poultryShop: string | undefined;
+  poultryShop:
+    | {
+        key: string;
+        label: string;
+      }
+    | undefined;
   symtompsStartDate: string | undefined;
 };
 export default function Reporting() {
@@ -39,14 +44,16 @@ export default function Reporting() {
       data.poultryShop &&
       data.symtompsStartDate
     ) {
+      console.log("sending");
       setLoading(true);
       axios
         .post("http://localhost:8080/open/submit-flu-report", {
           reporterName: data.fullName,
           phoneNumber: data.contact,
-          address: data.address,
-          poultryShop: data.poultryShop,
+          poultryShopName: data.poultryShop.label,
+          poultryShopDocId: data.poultryShop.key,
           symptomStartDate: data.symtompsStartDate,
+          address: data.address,
         })
         .then(() => {
           setLoading(false);
@@ -139,6 +146,7 @@ export default function Reporting() {
                     type={item.type}
                     key={uuidv4()}
                     searchOptions={sellers}
+                    setData={setData}
                     //@ts-ignore
                     onChange={(e) => {
                       setData((prev) => {
@@ -157,17 +165,18 @@ export default function Reporting() {
             )}
 
             {/* Phone OTP */}
-            <div className="flex">
+            {/* <div className="flex">
               <FormInput
                 label="Verify Phone Number"
                 placeholder="Enter OTP"
                 setSellerOption={setSelectedSeller}
+                setData={setData}
                 type="text"
                 searchOptions={sellers}
               />
               <PrimaryButton label="Send OTP" className={"ml-5 h-12 mt-auto"} />
-            </div>
-            <p className="mt-2">
+            </div> */}
+            <p className="mt-2 mb-2">
               Your data will be encrypted and stored on your server, we dont
               sell your use your data without your permissions.
             </p>
