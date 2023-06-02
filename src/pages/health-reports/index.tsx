@@ -4,11 +4,12 @@ import Logo from "@assets/logo/logo.svg";
 import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
 import BarChart from "@/features/ui/BarChart/BarChart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 
 import HealthSidebar from "@/features/ui/HealthSidebar/HealthSidebar";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
+import axios from "axios";
 const Dashboard = () => {
   let links = [
     {
@@ -32,6 +33,33 @@ const Dashboard = () => {
       { name: "Narrowness of eyes", id: 5 },
     ],
   };
+  const [reportedSellers, setReportedSellers] = useState<
+    Array<{
+      sellerName: string;
+      rootFarmId: string;
+      rootFarmName: string;
+      count: Number;
+      sellerId: string;
+    }>
+  >([]);
+
+  const getReportedSellers = async () => {
+    await axios
+      .get("http://localhost:8080/api/health-worker/reported-sellers/", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res);
+        setReportedSellers(res.data.reportedSellers);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getReportedSellers();
+  }, []);
 
   return (
     <div className="flex w-screen h-screen bg-secondary ">
@@ -40,28 +68,32 @@ const Dashboard = () => {
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
-          <h1 className="text-primary text-3xl font-bold">Reports</h1>
+          <h1 className="text-primary text-3xl font-bold">Sellers</h1>
           <div className="p-5">
             <table className="w-full ">
               <thead className="text-primary font-medium">
                 <tr>
                   <td>Seller Name</td>
-                  <td>Root Farm name</td>
                   <td>Number of reports</td>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b   ">
-                  <td className="py-2">Rajesh Poultry</td>
-                  <td>Jay Farm </td>
-                  <td>10</td>
-                  <td>
-                    {" "}
-                    <Link href={"/report-details"}>
-                      <Icon icon="iconoir:reports" height={30} />
-                    </Link>
-                  </td>
-                </tr>
+                {reportedSellers.length != 0
+                  ? reportedSellers.map((reportedSeller) => (
+                      <tr className="border-b   " key={reportedSeller.sellerId}>
+                        <td className="py-2">Rajesh Poultry</td>
+                        <td>10</td>
+                        <td>
+                          {" "}
+                          <Link
+                            href={`/report-details/${reportedSeller.sellerId}`}
+                          >
+                            <Icon icon="iconoir:reports" height={30} />
+                          </Link>
+                        </td>
+                      </tr>
+                    ))
+                  : ""}
               </tbody>
             </table>
           </div>
