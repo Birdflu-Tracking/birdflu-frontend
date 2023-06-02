@@ -47,6 +47,7 @@ const Dashboard = () => {
     farmData: User;
   }> | null>();
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const state = {
     options: [
@@ -100,10 +101,13 @@ const Dashboard = () => {
         setSellerData(res.data.message.sellerData);
         setRootFarms(res.data.message.rootFarms);
         setSellerReports(res.data.message.sellerReports);
-        setLoading(false)
+        setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.status == 404) {
+          console.log(err);
+          router.push("/404")
+        }
       });
   }, [sellerId]);
 
