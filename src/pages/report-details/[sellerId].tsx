@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import Loading from "@/ui/LoadingScreen/Loading";
 
 type UserType = "farmer" | "distributor" | "seller";
 
@@ -45,6 +46,7 @@ const Dashboard = () => {
     farmId: string;
     farmData: User;
   }> | null>();
+  const [loading, setLoading] = useState(true);
 
   const state = {
     options: [
@@ -98,6 +100,7 @@ const Dashboard = () => {
         setSellerData(res.data.message.sellerData);
         setRootFarms(res.data.message.rootFarms);
         setSellerReports(res.data.message.sellerReports);
+        setLoading(false)
       })
       .catch((err) => {
         console.log(err);
@@ -106,7 +109,9 @@ const Dashboard = () => {
 
   const handleSendRequest = () => {};
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
       <Sidebar links={links} />
