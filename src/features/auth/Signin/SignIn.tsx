@@ -19,10 +19,12 @@ const SignIn = () => {
   const [password, setpassword] = useState<any>(undefined);
   const [errors, setErrors] = useState<string>("");
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   async function handleSignin() {
     if (userType && email && password) {
       console.log(userType, email, password);
+      setLoading(true);
       try {
         const { user } = await signInWithEmailAndPassword(
           auth,
@@ -43,7 +45,7 @@ const SignIn = () => {
           )
           .then((res) => {
             console.log(res.data);
-
+            setLoading(false);
             if (userType == "health-worker") {
               router.push("/health-dashboard");
             } else {
@@ -52,7 +54,16 @@ const SignIn = () => {
           })
           .catch((err) => console.log(err));
       } catch (err) {
-        setErrors("User not found!");
+        setLoading(false);
+        //@ts-ignore
+        if (err.code == "auth/wrong-password") {
+          setErrors("Invalid Password");
+        }
+        //@ts-ignore
+
+        if (err.code == "auth/user-not-found") {
+          setErrors("User not registered");
+        }
       }
     }
   }
@@ -99,7 +110,7 @@ const SignIn = () => {
               <input
                 type="email"
                 className="rounded-md p-3 border border-black/10 focus:outline-none font-light"
-                // placeholder="+91583452557"
+                placeholder="farm@gmail.com"
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
@@ -107,7 +118,7 @@ const SignIn = () => {
             <div className="flex flex-col space-y-2">
               <label htmlFor="">password</label>
               <input
-                type="text"
+                type="password"
                 className="rounded-md p-3 border border-black/10 focus:outline-none font-light"
                 // placeholder="Enter the 6 digit password"
                 onChange={(e) => setpassword(e.target.value)}
@@ -115,8 +126,9 @@ const SignIn = () => {
               />
             </div>
             <Button
-              value="Sign In"
+              value={loading ? "Signing in..." : "Sign In"}
               rounded="rounded-md"
+              disabled={loading==true}
               onClick={() => handleSignin()}
             />
           </form>

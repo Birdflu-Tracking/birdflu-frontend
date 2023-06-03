@@ -15,7 +15,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   return (
     <button
-      className={`disabled:opacity-5 h-fit bg-primary text-white  py-2 px-5 ${rounded} ${
+      className={`disabled:opacity-40 h-fit bg-primary text-white  py-2 px-5 ${rounded} ${
         fullWidth ? "w-full" : "w-fit"
       } ${text}`}
       {...props}

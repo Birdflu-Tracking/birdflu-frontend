@@ -17,6 +17,7 @@ const SignUp = () => {
     user_type: "farmer",
     full_name: undefined,
     email: undefined,
+    password: undefined,
     phone_number: undefined,
     outlet_name: undefined,
     outlet_address: undefined,
@@ -50,6 +51,7 @@ const SignUp = () => {
       data.user_type &&
       data.full_name &&
       data.email &&
+      data.password &&
       data.outlet_address &&
       data.outlet_name &&
       data.phone_number
@@ -57,9 +59,9 @@ const SignUp = () => {
       setLoading(true);
       axios
         .post(`http://localhost:8080/api/auth/create/${data.user_type}`, {
-          firstName: data.full_name,
-          lastName: data.full_name,
+          fullName:data.full_name,
           email: data.email,
+          password:data.password,
           phoneNumber: data.phone_number,
           outletAddress: data.outlet_address,
           outletName: data.outlet_name,
@@ -68,18 +70,18 @@ const SignUp = () => {
         })
         .then((d) => {
           console.log(d);
-          router.push("/dashboard");
+          router.push("/auth/signin");
           setLoading(false);
         })
         .catch((err) => {
           console.log(err);
 
           setLoading(false);
-
-          if (err.code === "ERR_NETWORK") {
-            setErrors("No internet");
-          } else {
+          if (err.response.data.code == "auth/email-already-exists") {
             setErrors("User already Exist please login");
+          }
+          if(err.code === "ERR_NETWORK") {
+            setErrors("No internet");
           }
         });
     }
@@ -153,6 +155,21 @@ const SignUp = () => {
             />
           </div>
           <div className="flex flex-col space-y-2">
+            <label htmlFor="">Password</label>
+            <input
+              type="password"
+              className="rounded-md p-3 border border-black/10 focus:outline-none font-light"
+              onChange={(e) => {
+                //@ts-ignore
+                setData((data) => ({
+                  ...data,
+                  password: e.target.value,
+                }));
+              }}
+              required
+            />
+          </div>
+          <div className="flex flex-col space-y-2">
             <label htmlFor="">Phone number</label>
             <input
               type="tel"
@@ -201,7 +218,12 @@ const SignUp = () => {
               required
             />
           </div>
-          <Button value="Sign Up" onClick={() => handleSignup()} rounded="lg" disabled={loading}/>
+          <Button
+              value={loading?"Registering...":"Sign In"}
+              onClick={() => handleSignup()}
+            rounded="lg"
+            disabled={loading==true}
+          />
         </form>
         <p className="text-center">
           Already have an account ?
