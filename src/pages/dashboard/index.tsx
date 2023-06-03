@@ -210,7 +210,7 @@ const Dashboard = () => {
               "
               >
                 <span className="text-5xl font-bold">
-                  {batchSalesData ? batchSalesData.totalBatchesSold : 0}
+                  {batchSalesData ? batchSalesData.totalChickensSold : 0}
                 </span>{" "}
                 Chickens <br /> Sold this Month
               </h1>

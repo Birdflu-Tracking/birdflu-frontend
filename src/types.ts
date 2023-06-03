@@ -40,4 +40,5 @@ export type User = {
 export type BatchSalesData = {
   totalBatchesGenerated: number;
   totalBatchesSold: number;
+  totalChickensSold: number;
 };
