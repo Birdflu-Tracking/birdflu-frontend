@@ -13,7 +13,7 @@ import TapPay from "@assets/Images/tap-transfer.png";
 import axios from "axios";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 import Loading from "@/ui/LoadingScreen/Loading";
-import { Batch, WsResponse } from "@/types";
+import { Batch, BatchSalesData, WsResponse } from "@/types";
 import { firebaseDateToDate, firebaseDateToTime } from "@/utils";
 
 const Dashboard = () => {
@@ -44,6 +44,9 @@ const Dashboard = () => {
   const [currentBatch, setCurrentBatch] = useState<string | null>(null);
   const [nfcCode, setNfcCode] = useState<any>(undefined);
   const [loading, setLoading] = useState(true);
+  const [batchSalesData, setBatchSalesData] = useState<BatchSalesData | null>(
+    null
+  );
   // const [tm, setTm] = useState<NodeJS.Timeout>();
   // const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
 
@@ -80,13 +83,28 @@ const Dashboard = () => {
     }
   }, [currentBatch, birdFluWs]);
 
+  const getDashboardData = useCallback(() => {
+    axios
+      .get("http://localhost:8080/api/user/total-batches-generated-and-sold", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res.data);
+        setBatchSalesData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
   const getBatches = useCallback(async () => {
     await axios
       .get("http://localhost:8080/api/user/batches", { withCredentials: true })
       .then((res) => {
         console.log(res.data);
         setBatches(res.data.batches);
-        setLoading(false);
+        getDashboardData();
       })
       .catch((err) => {
         console.log(err);
@@ -149,7 +167,6 @@ const Dashboard = () => {
         });
     }
   };
-
   useEffect(() => {
     startConn();
     getBatches();
@@ -174,7 +191,7 @@ const Dashboard = () => {
                 className="text-primary text-2xl font-semibold flex-1
               "
               >
-                <span className="text-5xl font-bold">132</span> Chickens <br />{" "}
+                <span className="text-5xl font-bold">{batchSalesData ? batchSalesData.totalBatchesSold : 0}</span> Chickens <br />{" "}
                 Sold this Month
               </h1>
               <div className="w-full flex-[2]">
@@ -191,13 +208,15 @@ const Dashboard = () => {
                 </button>
               </div>
               <div className="bg-secondary p-5 rounded-xl">
-                <h1 className="text-primary text-4xl font-bold">3411</h1>
+                <h1 className="text-primary text-4xl font-bold">{batchSalesData ? batchSalesData.totalBatchesGenerated : 0}</h1>
                 <p className="text-textSecondary font-medium">
                   Total Batches Generated
                 </p>
               </div>
               <div className="bg-secondary p-5 rounded-xl">
-                <h1 className="text-primary text-4xl font-bold">2311</h1>
+                <h1 className="text-primary text-4xl font-bold">
+                  {batchSalesData ? batchSalesData.totalBatchesSold : 0}
+                </h1>
                 <p className="text-textSecondary font-medium">
                   Total Batches Sold
                 </p>

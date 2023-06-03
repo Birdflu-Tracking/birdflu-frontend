@@ -23,28 +23,37 @@ const SignIn = () => {
   async function handleSignin() {
     if (userType && email && password) {
       console.log(userType, email, password);
-      const { user } = await signInWithEmailAndPassword(auth, email, password);
-      const idToken = await user.getIdToken();
-      await axios
-        .post(
-          `${
-            userType == "health-worker"
-              ? "http://localhost:8080/api/auth/login/health-worker"
-              : "http://localhost:8080/api/auth/login"
-          }`,
-          { idToken },
-          { withCredentials: true }
-        )
-        .then((res) => {
-          console.log(res.data);
+      try {
+        const { user } = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
 
-          if (userType == "health-worker") {
-            router.push("/health-dashboard");
-          } else {
-            router.push("/dashboard");
-          }
-        })
-        .catch((err) => console.log(err));
+        const idToken = await user.getIdToken();
+        await axios
+          .post(
+            `${
+              userType == "health-worker"
+                ? "http://localhost:8080/api/auth/login/health-worker"
+                : "http://localhost:8080/api/auth/login"
+            }`,
+            { idToken },
+            { withCredentials: true }
+          )
+          .then((res) => {
+            console.log(res.data);
+
+            if (userType == "health-worker") {
+              router.push("/health-dashboard");
+            } else {
+              router.push("/dashboard");
+            }
+          })
+          .catch((err) => console.log(err));
+      } catch (err) {
+        setErrors("User not found!");
+      }
     }
   }
   useEffect(() => {
