@@ -17,22 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import Loading from "@/ui/LoadingScreen/Loading";
-
-type UserType = "farmer" | "distributor" | "seller";
-
-type User = {
-  userId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: number;
-  outletAddress: string;
-  type: UserType;
-  outletName: string;
-  latitude: number;
-  longitude: number;
-  infected: boolean;
-};
+import { User } from "@/types";
 
 const Dashboard = () => {
   const [toggle, settoggle] = useState(false);
@@ -109,9 +94,7 @@ const Dashboard = () => {
           router.push("/404")
         }
       });
-  }, [sellerId]);
-
-  const handleSendRequest = () => {};
+  }, [router, sellerId]);
 
   return loading ? (
     <Loading />

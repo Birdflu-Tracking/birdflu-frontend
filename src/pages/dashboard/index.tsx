@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
 import BarChart from "@/features/ui/BarChart/BarChart";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -13,25 +13,8 @@ import TapPay from "@assets/Images/tap-transfer.png";
 import axios from "axios";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 import Loading from "@/ui/LoadingScreen/Loading";
-
-type WsResponse = {
-  message: string;
-  type: Number;
-};
-
-export type Batch = {
-  batchSize: number;
-  batchId: string;
-  createdAt: {
-    _nanoseconds: number;
-    _seconds: number;
-  };
-  farmerId: string;
-  distributorId: string;
-  sellerId: string;
-  infected: boolean;
-  currentOwner: any;
-};
+import { Batch, WsResponse } from "@/types";
+import { firebaseDateToDate, firebaseDateToTime } from "@/utils";
 
 const Dashboard = () => {
   const [batchSize, setBatchSize] = useState(0);
@@ -46,6 +29,11 @@ const Dashboard = () => {
       name: "Inventory",
       path: "/inventory",
       icon: "material-symbols:inventory-2",
+    },
+    {
+      name: "Sold Batches",
+      path: "/sold-batches",
+      icon: "material-symbols:money",
     },
   ];
   const [toggle, settoggle] = useState(false);
@@ -84,12 +72,26 @@ const Dashboard = () => {
   const handleTransferRead = (batchId: string) => {
     setCurrentBatch(batchId);
   };
+
   useEffect(() => {
     if (birdFluWs?.OPEN && currentBatch) {
       console.log("Reading");
       birdFluWs.send("read");
     }
-  }, [currentBatch]);
+  }, [currentBatch, birdFluWs]);
+
+  const getBatches = useCallback(async () => {
+    await axios
+      .get("http://localhost:8080/api/user/batches", { withCredentials: true })
+      .then((res) => {
+        console.log(res.data);
+        setBatches(res.data.batches);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   useEffect(() => {
     if (nfcCode) {
@@ -109,12 +111,13 @@ const Dashboard = () => {
           toast(`Batch ${currentBatch} transfered`);
         });
     }
-  }, [nfcCode]);
+  }, [nfcCode, getBatches, currentBatch]);
+
   const handleOpen = (ws: WebSocket) => {
     setWS(ws);
   };
 
-  const startConn = () => {
+  const startConn = useCallback(() => {
     const ws = new WebSocket("ws://birdflu.local:81");
     ws.onerror = (err) => console.error(err);
     ws.onopen = () => handleOpen(ws);
@@ -124,24 +127,6 @@ const Dashboard = () => {
     };
     ws.onmessage = (msg) => handleMessage(JSON.parse(msg.data.trim()));
     WebSocket;
-  };
-
-  const getBatches = async () => {
-    await axios
-      .get("http://localhost:8080/api/user/batches", { withCredentials: true })
-      .then((res) => {
-        console.log(res.data);
-        setBatches(res.data.batches);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  useEffect(() => {
-    startConn();
-    getBatches();
   }, []);
 
   const handleBatchCreation = () => {
@@ -164,6 +149,11 @@ const Dashboard = () => {
         });
     }
   };
+
+  useEffect(() => {
+    startConn();
+    getBatches();
+  }, [startConn, getBatches]);
 
   return loading ? (
     <Loading />
@@ -260,25 +250,9 @@ const Dashboard = () => {
                     return (
                       <tr className="border-b   " key={index}>
                         <td className="py-2">
-                          {new Date(batch.createdAt._seconds * 1000)
-                            .toString()
-                            .split(" ")[2] +
-                            "-" +
-                            new Date(batch.createdAt._seconds * 1000)
-                              .toString()
-                              .split(" ")[1] +
-                            "-" +
-                            new Date(batch.createdAt._seconds * 1000)
-                              .toString()
-                              .split(" ")[3]}
+                          {firebaseDateToDate(batch.createdAt)}
                         </td>
-                        <td>
-                          {
-                            new Date(batch.createdAt._seconds * 1000)
-                              .toString()
-                              .split(" ")[4]
-                          }
-                        </td>
+                        <td>{firebaseDateToTime(batch.createdAt)}</td>
                         <td>{batch.batchId}</td>
                         <td>{batch.batchSize}</td>
                         <td>

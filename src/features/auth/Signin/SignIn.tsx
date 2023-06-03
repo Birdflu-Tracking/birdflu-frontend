@@ -11,12 +11,15 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/firebaseback.config";
+import { cookies } from "next/headers";
+
 const SignIn = () => {
   const [userType, setUserType] = useState<any>("farmer");
   const [email, setEmail] = useState<any>(undefined);
   const [password, setpassword] = useState<any>(undefined);
   const [errors, setErrors] = useState<string>("");
   const router = useRouter();
+
   async function handleSignin() {
     if (userType && email && password) {
       console.log(userType, email, password);
@@ -34,8 +37,9 @@ const SignIn = () => {
         )
         .then((res) => {
           console.log(res.data);
+
           if (userType == "health-worker") {
-            router.push("/health-dashboard")
+            router.push("/health-dashboard");
           } else {
             router.push("/dashboard");
           }

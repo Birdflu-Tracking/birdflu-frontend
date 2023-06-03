@@ -78,22 +78,28 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {reportedSellers.length != 0
-                  ? reportedSellers.map((reportedSeller) => (
-                      <tr className="border-b   " key={reportedSeller.sellerId}>
-                        <td className="py-2">{reportedSeller.sellerName}</td>
-                        <td>10</td>
-                        <td>
-                          {" "}
-                          <Link
-                            href={`/report-details/${reportedSeller.sellerId}`}
-                          >
-                            <Icon icon="iconoir:reports" height={30} />
-                          </Link>
-                        </td>
-                      </tr>
-                    ))
-                  : ""}
+                {reportedSellers.length != 0 ? (
+                  reportedSellers.map((reportedSeller) => (
+                    <tr className="border-b   " key={reportedSeller.sellerId}>
+                      <td className="py-2">{reportedSeller.sellerName}</td>
+                      <td>10</td>
+                      <td>
+                        {" "}
+                        <Link
+                          href={`/report-details/${reportedSeller.sellerId}`}
+                        >
+                          <Icon icon="iconoir:reports" height={30} />
+                        </Link>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td></td>
+                    <td>No Sellers</td>
+                    <td></td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

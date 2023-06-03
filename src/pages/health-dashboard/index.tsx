@@ -39,7 +39,7 @@ const Dashboard = () => {
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
-      <Sidebar links={links}/>
+      <Sidebar links={links} />
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
@@ -190,7 +190,7 @@ const Dashboard = () => {
             >
               <Icon icon="ic:round-close" height={30} />
             </button>
-            <Image src={TapPay} height={150} width={150} />
+            <Image src={TapPay} height={150} width={150} alt="tap-to-pay" />
             <h1 className="text-textSecondary  text-center text-xl">
               Tap Your NFC card to transfer batch
             </h1>
