@@ -54,6 +54,7 @@ const SignIn = () => {
           })
           .catch((err) => console.log(err));
       } catch (err) {
+        console.log(err)
         setLoading(false);
         //@ts-ignore
         if (err.code == "auth/wrong-password") {

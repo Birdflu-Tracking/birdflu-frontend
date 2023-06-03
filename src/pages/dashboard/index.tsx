@@ -35,8 +35,13 @@ const Dashboard = () => {
       path: "/sold-batches",
       icon: "material-symbols:money",
     },
+    {
+      name:"Sample Requests",
+      path:"/sample-requests",
+      icon: "material-symbols:money",
+
+    }
   ];
-  const [toggle, settoggle] = useState(false);
   const [transferModalToggle, setTransferModalToggle] = useState(false);
   const [batchCreationLoading, setBatchCreationLoading] = useState(false);
   const [birdFluWs, setWS] = useState<WebSocket | null>(null);
@@ -49,28 +54,19 @@ const Dashboard = () => {
   const [batchSalesData, setBatchSalesData] = useState<BatchSalesData | null>(
     null
   );
-  const [sampleSymptoms, setSampleSymptoms] = useState([]);
   // const [tm, setTm] = useState<NodeJS.Timeout>();
   // const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
 
-  const state = {
-    options: [
-      { name: "Depression", id: 1 },
-      { name: "Combs Wattle Blush Face", id: 2 },
-      { name: "Swollen Face Region", id: 3 },
-      { name: "Balance Desorder", id: 4 },
-      { name: "Narrowness Of Eyes", id: 5 },
-    ],
-  };
 
 
-   const getCurrentReportRequests = useCallback(async () => {
+  const getCurrentReportRequests = useCallback(async () => {
     await axios
       .get("http://localhost:8080/api/user/current/requests", {
         withCredentials: true,
       })
       .then((res) => {
-        setCurrentReports(res.data.reports)
+        console.log(res.data)
+        setCurrentReports(res.data.reports);
       })
       .catch((err) => {
         console.log(err);
@@ -112,22 +108,8 @@ const Dashboard = () => {
     setCurrentBatch(batchId);
   };
 
-  const handleSymptomSelect = (
-    selectedList: any,
-    selectedItem: any,
-    sampleNumber: number
-  ) => {
-    let symptomsList = selectedList.map((d) => d.name);
-    console.log(symptomsList)
-    let prev = [...sampleSymptoms];
-    //@ts-ignore
-    prev[sampleNumber] = symptomsList;
-    setSampleSymptoms(prev);
-  };
+ 
 
-  useEffect(() => {
-    console.log(sampleSymptoms);
-  }, [sampleSymptoms]);
 
   useEffect(() => {
     if (birdFluWs?.OPEN && currentBatch) {
@@ -221,21 +203,12 @@ const Dashboard = () => {
     }
   };
 
-  const handleReportSubmission = async () => {
-    if (sampleSymptoms.length == 4) {
-      console.log(JSON.stringify(sampleSymptoms))
-      axios.post(
-        "http://localhost:8080/api/user/farmer/report",
-        {requestId:"6ffCQN5aKXcBECH3Gjpt", chickenSymptoms: sampleSymptoms },
-        { withCredentials: true }
-      );
-    }
-  };
+
 
   useEffect(() => {
     startConn();
     getBatches();
-    getCurrentReportRequests()
+    getCurrentReportRequests();
   }, [startConn, getBatches]);
 
   return loading ? (
@@ -370,19 +343,22 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="bg-white h-full rounded-xl w-[25%] p-5 space-y-4">
-          <div className="flex flex-col justify-center items-center p-5 bg-secondary rounded-xl text-primary space-y-4">
-            <h3 className=" font-semibold">Chicken Flue Alerts</h3>
-            <Icon icon="solar:danger-triangle-linear" height={80} />
-            <p className=" text-xs text-center font-medium">
-              Possible flue spread from your farm please test chickens and
-              submit report
-            </p>
-            <Button
-              onClick={() => settoggle(true)}
-              value="Submit report"
-              text="text-xs"
-            />
-          </div>
+          {currentReports.length > 0 ? (
+            <div className="flex flex-col justify-center items-center p-5 bg-secondary rounded-xl text-primary space-y-4">
+              <h3 className=" font-semibold">Chicken Flue Alerts</h3>
+              <Icon icon="solar:danger-triangle-linear" height={80} />
+              <p className=" text-xs text-center font-medium">
+                Possible flue spread from your farm please test chickens and
+                submit report
+              </p>
+             <Link href={"/sample-requests"}> <Button
+                // onClick={() => settoggle(true)}
+                value="Submit report"
+                text="text-xs"
+              />
+              </Link>
+            </div>
+          ) : null}
           <div className="bg-secondary p-5 rounded-xl flex space-x-2 text-primary items-center ">
             {" "}
             <Icon icon="tabler:device-camera-phone" height={30} />
@@ -439,55 +415,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-      {toggle && (
-        <div className="absolute h-screen w-screen bg-gray-400/30 flex items-center justify-center">
-          <div className="relative h-fit w-1/2 rounded-lg shadow-lg bg-white p-6 flex flex-col">
-            <div className="flex justify-between pb-4">
-              <p className="font-semibold">Submit chicken symptoms report</p>
-              <button onClick={() => settoggle(false)}>
-                <Icon icon="ic:round-close" height={30} />
-              </button>
-            </div>
-            <div className="flex-1 space-y-4">
-              <div className="space-y-2">
-                <h5 className="font-medium text-sm text-textSecondary">
-                  Check 4 chickens for symptoms
-                </h5>
-                <p className="text-xs">Tick the symptoms visible in chicken</p>
-              </div>
-              <div className="grid grid-cols-2 grid-rows-2 gap-10">
-                {[1, 2, 3, 4].map((d, index) => (
-                  <div className="space-y-2" key={index}>
-                    <h5 className="font-medium text-sm text-textSecondary">
-                      Chicken {d}
-                    </h5>
-                    <p className="text-xs">Symptom</p>
-                    <Multiselect
-                      options={state.options} // Options to display in the dropdown
-                      displayValue="name" // Property name to display in the dropdown options
-                      onSelect={(selectedList: any, selectedItem: any) =>
-                        handleSymptomSelect(selectedList, selectedItem, index)
-                      }
-                      style={{
-                        chips: {
-                          // To change css for option container
-                          backgroundColor: "#F0F0F0",
-                          color: "#333333",
-                        },
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-              <Button
-                value="Submit"
-                text="text-xs"
-                onClick={() => handleReportSubmission()}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      
       <ToastContainer toastStyle={{ backgroundColor: "#FFFFFF" }} />
     </div>
   );

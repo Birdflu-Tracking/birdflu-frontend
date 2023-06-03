@@ -31,6 +31,12 @@ const SoldBatches = () => {
       path: "/sold-batches",
       icon: "material-symbols:money",
     },
+    {
+      name:"Sample Requests",
+      path:"/sample-requests",
+      icon: "material-symbols:money",
+
+    }
   ]);
 
   const getBatches = useCallback(async () => {
