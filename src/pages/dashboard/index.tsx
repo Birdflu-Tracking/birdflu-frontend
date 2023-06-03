@@ -41,25 +41,60 @@ const Dashboard = () => {
   const [batchCreationLoading, setBatchCreationLoading] = useState(false);
   const [birdFluWs, setWS] = useState<WebSocket | null>(null);
   const [batches, setBatches] = useState<Array<Batch> | null>(null);
+  const [soldBatches, setSoldBatches] = useState<Array<Batch> | null>(null);
   const [currentBatch, setCurrentBatch] = useState<string | null>(null);
+  const [currentReports, setCurrentReports] = useState([]);
   const [nfcCode, setNfcCode] = useState<any>(undefined);
   const [loading, setLoading] = useState(true);
   const [batchSalesData, setBatchSalesData] = useState<BatchSalesData | null>(
     null
   );
-  const [sampleSymptoms, setSampleSymptoms] = useState();
+  const [sampleSymptoms, setSampleSymptoms] = useState([]);
   // const [tm, setTm] = useState<NodeJS.Timeout>();
   // const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
 
   const state = {
     options: [
       { name: "Depression", id: 1 },
-      { name: "Combs, wattle, bluish face region", id: 2 },
-      { name: "Swollen face region", id: 3 },
-      { name: "Balance disorders", id: 4 },
-      { name: "Narrowness of eyes", id: 5 },
+      { name: "Combs Wattle Blush Face", id: 2 },
+      { name: "Swollen Face Region", id: 3 },
+      { name: "Balance Desorder", id: 4 },
+      { name: "Narrowness Of Eyes", id: 5 },
     ],
   };
+
+
+   const getCurrentReportRequests = useCallback(async () => {
+    await axios
+      .get("http://localhost:8080/api/user/current/requests", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setCurrentReports(res.data.reports)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+  // const getSoldBatches = useCallback(async () => {
+  //   await axios
+  //     .get("http://localhost:8080/api/user/sold-batches", {
+  //       withCredentials: true,
+  //     })
+  //     .then((res) => {
+  //       console.log(res.data);
+  //       let sorted = res.data.batche.map(batch)
+  //       setSoldBatches(res.data.batches);
+  //       setLoading(false);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
+
+  // useEffect(() => {
+  //   getSoldBatches();
+  // }, [getSoldBatches]);
 
   const handleMessage = async (msg: WsResponse) => {
     switch (msg.type) {
@@ -82,8 +117,17 @@ const Dashboard = () => {
     selectedItem: any,
     sampleNumber: number
   ) => {
-    console.log(`SELECTED ${sampleNumber}`, selectedList, selectedItem);
+    let symptomsList = selectedList.map((d) => d.name);
+    console.log(symptomsList)
+    let prev = [...sampleSymptoms];
+    //@ts-ignore
+    prev[sampleNumber] = symptomsList;
+    setSampleSymptoms(prev);
   };
+
+  useEffect(() => {
+    console.log(sampleSymptoms);
+  }, [sampleSymptoms]);
 
   useEffect(() => {
     if (birdFluWs?.OPEN && currentBatch) {
@@ -178,16 +222,20 @@ const Dashboard = () => {
   };
 
   const handleReportSubmission = async () => {
-    axios.post(
-      "http://localhost:8080/api/user/farmer/report",
-      {},
-      { withCredentials: true }
-    );
+    if (sampleSymptoms.length == 4) {
+      console.log(JSON.stringify(sampleSymptoms))
+      axios.post(
+        "http://localhost:8080/api/user/farmer/report",
+        {requestId:"6ffCQN5aKXcBECH3Gjpt", chickenSymptoms: sampleSymptoms },
+        { withCredentials: true }
+      );
+    }
   };
 
   useEffect(() => {
     startConn();
     getBatches();
+    getCurrentReportRequests()
   }, [startConn, getBatches]);
 
   return loading ? (
@@ -332,7 +380,6 @@ const Dashboard = () => {
             <Button
               onClick={() => settoggle(true)}
               value="Submit report"
-              rounded="rounded-full"
               text="text-xs"
             />
           </div>
@@ -369,7 +416,6 @@ const Dashboard = () => {
             </div>
             <Button
               value={batchCreationLoading ? "Creating" : "Create Batch"}
-              rounded="rounded-full"
               text="text-md"
               fullWidth
               onClick={() => handleBatchCreation()}
@@ -435,7 +481,6 @@ const Dashboard = () => {
               </div>
               <Button
                 value="Submit"
-                rounded="rounded-full"
                 text="text-xs"
                 onClick={() => handleReportSubmission()}
               />

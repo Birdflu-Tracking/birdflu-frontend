@@ -219,15 +219,13 @@ const SignUp = () => {
             />
           </div>
           <Button
-              value={loading?"Registering...":"Sign In"}
+              value={loading?"Registering...":"Sign Up"}
               onClick={() => handleSignup()}
-            rounded="lg"
             disabled={loading==true}
           />
         </form>
         <p className="text-center">
-          Already have an account ?
-          <Link
+          Already have an account ?          <Link
             href="/auth/signin"
             className="text-primary font-semibold ml-2  "
           >
