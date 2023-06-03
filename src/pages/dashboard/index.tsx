@@ -47,6 +47,7 @@ const Dashboard = () => {
   const [batchSalesData, setBatchSalesData] = useState<BatchSalesData | null>(
     null
   );
+  const [sampleSymptoms, setSampleSymptoms] = useState();
   // const [tm, setTm] = useState<NodeJS.Timeout>();
   // const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
 
@@ -74,6 +75,14 @@ const Dashboard = () => {
 
   const handleTransferRead = (batchId: string) => {
     setCurrentBatch(batchId);
+  };
+
+  const handleSymptomSelect = (
+    selectedList: any,
+    selectedItem: any,
+    sampleNumber: number
+  ) => {
+    console.log(`SELECTED ${sampleNumber}`, selectedList, selectedItem);
   };
 
   useEffect(() => {
@@ -109,7 +118,7 @@ const Dashboard = () => {
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [getDashboardData]);
 
   useEffect(() => {
     if (nfcCode) {
@@ -167,6 +176,15 @@ const Dashboard = () => {
         });
     }
   };
+
+  const handleReportSubmission = async () => {
+    axios.post(
+      "http://localhost:8080/api/user/farmer/report",
+      {},
+      { withCredentials: true }
+    );
+  };
+
   useEffect(() => {
     startConn();
     getBatches();
@@ -191,8 +209,10 @@ const Dashboard = () => {
                 className="text-primary text-2xl font-semibold flex-1
               "
               >
-                <span className="text-5xl font-bold">{batchSalesData ? batchSalesData.totalBatchesSold : 0}</span> Chickens <br />{" "}
-                Sold this Month
+                <span className="text-5xl font-bold">
+                  {batchSalesData ? batchSalesData.totalBatchesSold : 0}
+                </span>{" "}
+                Chickens <br /> Sold this Month
               </h1>
               <div className="w-full flex-[2]">
                 <BarChart />
@@ -208,7 +228,9 @@ const Dashboard = () => {
                 </button>
               </div>
               <div className="bg-secondary p-5 rounded-xl">
-                <h1 className="text-primary text-4xl font-bold">{batchSalesData ? batchSalesData.totalBatchesGenerated : 0}</h1>
+                <h1 className="text-primary text-4xl font-bold">
+                  {batchSalesData ? batchSalesData.totalBatchesGenerated : 0}
+                </h1>
                 <p className="text-textSecondary font-medium">
                   Total Batches Generated
                 </p>
@@ -397,6 +419,9 @@ const Dashboard = () => {
                     <Multiselect
                       options={state.options} // Options to display in the dropdown
                       displayValue="name" // Property name to display in the dropdown options
+                      onSelect={(selectedList: any, selectedItem: any) =>
+                        handleSymptomSelect(selectedList, selectedItem, index)
+                      }
                       style={{
                         chips: {
                           // To change css for option container
@@ -408,7 +433,12 @@ const Dashboard = () => {
                   </div>
                 ))}
               </div>
-              <Button value="Submit" rounded="rounded-full" text="text-xs" />
+              <Button
+                value="Submit"
+                rounded="rounded-full"
+                text="text-xs"
+                onClick={() => handleReportSubmission()}
+              />
             </div>
           </div>
         </div>
