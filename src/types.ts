@@ -36,3 +36,8 @@ export type User = {
   longitude: number;
   infected: boolean;
 };
+
+export type BatchSalesData = {
+  totalBatchesGenerated: number;
+  totalBatchesSold: number;
+};
