@@ -87,7 +87,11 @@ const SoldBatches = () => {
                         <td>{firebaseDateToTime(batch.createdAt)}</td>
                         <td>{batch.batchId}</td>
                         <td>{batch.batchSize}</td>
-                        <td>{batch.buyer.outletName}</td>
+                        <td>
+                          {batch.buyer
+                            ? batch.buyer.outletName
+                            : "User not found"}
+                        </td>
                       </tr>
                     ))
                   : ""}

@@ -49,7 +49,7 @@ const Dashboard = () => {
   const [soldBatches, setSoldBatches] = useState<Array<Batch> | null>(null);
   const [currentBatch, setCurrentBatch] = useState<string | null>(null);
   const [currentReports, setCurrentReports] = useState([]);
-  const [nfcCode, setNfcCode] = useState<any>(undefined);
+  const [nfcCode, setNfcCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [batchSalesData, setBatchSalesData] = useState<BatchSalesData | null>(
     null
@@ -162,6 +162,8 @@ const Dashboard = () => {
           setTransferModalToggle(false);
           getBatches();
           toast(`Batch ${currentBatch} transfered`);
+          setCurrentBatch(null)
+          setNfcCode(null)
         });
     }
   }, [nfcCode, getBatches, currentBatch]);
