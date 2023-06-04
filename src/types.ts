@@ -3,13 +3,15 @@ export type WsResponse = {
   type: Number;
 };
 
+type Timestamp = {
+  _seconds: number;
+  _nanoseconds: number;
+};
+
 export interface Batch {
   batchSize: number;
   batchId: string;
-  createdAt: {
-    _nanoseconds: number;
-    _seconds: number;
-  };
+  createdAt: Timestamp;
   farmerId: string;
   distributorId: string;
   sellerId: string;
@@ -25,8 +27,7 @@ export type UserType = "farmer" | "distributor" | "seller";
 
 export type User = {
   userId: string;
-  firstName: string;
-  lastName: string;
+  fullName: string;
   email: string;
   phoneNumber: number;
   outletAddress: string;
@@ -41,4 +42,15 @@ export type BatchSalesData = {
   totalBatchesGenerated: number;
   totalBatchesSold: number;
   totalChickensSold: number;
+};
+
+export type FarmReports = {
+  reportId: string;
+  farmId: string;
+  HealthWorkerDocId: string;
+  initiatedAt: Timestamp;
+  submittedAt: Timestamp;
+  submitted: boolean;
+  predictionResult: boolean;
+  chickenSymptoms: Array<object>;
 };

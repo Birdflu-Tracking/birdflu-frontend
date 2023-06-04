@@ -8,7 +8,7 @@ import PieChart from "@/features/ui/PieChart/PieChart";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 import { use, useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { BatchWithBuyer } from "@/types";
+import { BatchWithBuyer, FarmReports } from "@/types";
 import { firebaseDateToDate, firebaseDateToTime } from "@/utils";
 import Multiselect from "multiselect-react-dropdown";
 
@@ -19,7 +19,7 @@ const SampleRequests = () => {
   const [error, setError] = useState("");
   const [sampleSymptoms, setSampleSymptoms] = useState([]);
   const [currentReports, setCurrentReports] = useState([]);
-  const [requestId, setRequestId] = useState(undefined);
+  const [requestId, setRequestId] = useState<string | undefined>(undefined);
 
   const state = {
     options: [
@@ -47,11 +47,10 @@ const SampleRequests = () => {
       icon: "material-symbols:money",
     },
     {
-      name:"Sample Requests",
-      path:"/sample-requests",
+      name: "Sample Requests",
+      path: "/sample-requests",
       icon: "material-symbols:money",
-
-    }
+    },
   ]);
   const getCurrentReportRequests = useCallback(async () => {
     setLoading(true);
@@ -75,11 +74,11 @@ const SampleRequests = () => {
     selectedItem: any,
     sampleNumber: number
   ) => {
-    let symptomsList = selectedList.map((d) => d.name);
+    let symptomsList = selectedList.map((d: { name: any; }) => d.name);
     let prev = [...sampleSymptoms];
     //@ts-ignore
     prev[sampleNumber] = symptomsList;
-    console.log(prev)
+    console.log(prev);
     setSampleSymptoms(prev);
   };
   const handleReportSubmission = async () => {
@@ -135,28 +134,32 @@ const SampleRequests = () => {
                 </tr>
               </thead>
               <tbody className="text-gray-500">
-                {currentReports.length > 0
-                  ? currentReports.map((report, index) => (
-                      <tr className="border-b   " key={index}>
-                        <td className="py-2">{report.reportId}</td>
-                        <td className="py-2">
-                          {firebaseDateToDate(report.initiatedAt)}
-                        </td>
-                        <td className="py-2">
-                          {firebaseDateToTime(report.initiatedAt)}
-                        </td>
-                        <td className="py-2">
-                          <Button
-                            value="Submit report"
-                            onClick={() => {
-                              settoggle(true);
-                              setRequestId(report.reportId);
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  : <tr><td className="py-5">No Requests</td></tr> }
+                {currentReports.length > 0 ? (
+                  currentReports.map((report: FarmReports, index) => (
+                    <tr className="border-b   " key={index}>
+                      <td className="py-2">{report.reportId}</td>
+                      <td className="py-2">
+                        {firebaseDateToDate(report.initiatedAt)}
+                      </td>
+                      <td className="py-2">
+                        {firebaseDateToTime(report.initiatedAt)}
+                      </td>
+                      <td className="py-2">
+                        <Button
+                          value="Submit report"
+                          onClick={() => {
+                            settoggle(true);
+                            setRequestId(report.reportId);
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td className="py-5">No Requests</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

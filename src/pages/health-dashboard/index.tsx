@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
 import BarChart from "@/features/ui/BarChart/BarChart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 
 //assets
@@ -11,10 +11,15 @@ import TapPay from "@assets/Images/tap-transfer.png";
 import Map from "@/ui/Map/Map";
 import HealthSidebar from "@/features/ui/HealthSidebar/HealthSidebar";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
+import { useCookies } from "react-cookie";
+import { User } from "@/types";
 const Dashboard = () => {
   const [toggle, settoggle] = useState(false);
   const [transferModalToggle, setTransferModalToggle] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [cookie] = useCookies(["user"]);
+  const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
+
   const state = {
     options: [
       { name: "Depression", id: 1 },
@@ -36,6 +41,10 @@ const Dashboard = () => {
       icon: "material-symbols:inventory-2",
     },
   ];
+
+  useEffect(() => {
+    setCurrentUser(cookie["user"]);
+  }, [cookie]);
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
@@ -45,7 +54,9 @@ const Dashboard = () => {
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
           <div className="">
             <h5 className="text-primary text-lg font-semibold">Dashboard</h5>
-            <p className="text-base font-semibold">Hi Sanket ProFarmer</p>
+            <p className="text-base font-semibold">
+              Hi {currentUser ? currentUser.fullName : ""}
+            </p>
           </div>
           <div className="h-[350px] w-full rounded-xl overflow-hidden relative flex justify-center">
             {showSearch ? (

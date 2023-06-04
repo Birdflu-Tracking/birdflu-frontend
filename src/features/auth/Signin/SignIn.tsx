@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/config/firebaseback.config";
 import { cookies } from "next/headers";
+import { useCookies } from "react-cookie";
 
 const SignIn = () => {
   const [userType, setUserType] = useState<any>("farmer");
@@ -20,6 +21,7 @@ const SignIn = () => {
   const [errors, setErrors] = useState<string>("");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies(["user"]);
 
   async function handleSignin() {
     if (userType && email && password) {
@@ -33,6 +35,8 @@ const SignIn = () => {
         );
 
         const idToken = await user.getIdToken();
+        console.log({ idToken })
+        return;
         await axios
           .post(
             `${
@@ -44,9 +48,11 @@ const SignIn = () => {
             { withCredentials: true }
           )
           .then((res) => {
-            console.log(res.data);
+            setCookie("user", res.data.user);
             setLoading(false);
             if (userType == "health-worker") {
+              res.data.user.type = "health-worker";
+              setCookie("user", res.data.user);
               router.push("/health-dashboard");
             } else {
               router.push("/dashboard");
@@ -54,7 +60,7 @@ const SignIn = () => {
           })
           .catch((err) => console.log(err));
       } catch (err) {
-        console.log(err)
+        console.log(err);
         setLoading(false);
         //@ts-ignore
         if (err.code == "auth/wrong-password") {
@@ -129,7 +135,7 @@ const SignIn = () => {
             <Button
               value={loading ? "Signing in..." : "Sign In"}
               rounded="rounded-md"
-              disabled={loading==true}
+              disabled={loading == true}
               onClick={() => handleSignin()}
             />
           </form>

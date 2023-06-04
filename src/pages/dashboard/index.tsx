@@ -13,8 +13,9 @@ import TapPay from "@assets/Images/tap-transfer.png";
 import axios from "axios";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 import Loading from "@/ui/LoadingScreen/Loading";
-import { Batch, BatchSalesData, WsResponse } from "@/types";
+import { Batch, BatchSalesData, User, WsResponse } from "@/types";
 import { firebaseDateToDate, firebaseDateToTime } from "@/utils";
+import { useCookies } from "react-cookie";
 
 const Dashboard = () => {
   const [batchSize, setBatchSize] = useState(0);
@@ -36,11 +37,10 @@ const Dashboard = () => {
       icon: "material-symbols:money",
     },
     {
-      name:"Sample Requests",
-      path:"/sample-requests",
+      name: "Sample Requests",
+      path: "/sample-requests",
       icon: "material-symbols:money",
-
-    }
+    },
   ];
   const [transferModalToggle, setTransferModalToggle] = useState(false);
   const [batchCreationLoading, setBatchCreationLoading] = useState(false);
@@ -54,10 +54,11 @@ const Dashboard = () => {
   const [batchSalesData, setBatchSalesData] = useState<BatchSalesData | null>(
     null
   );
+  const [cookies] = useCookies(["user"]);
+  const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
+
   // const [tm, setTm] = useState<NodeJS.Timeout>();
   // const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
-
-
 
   const getCurrentReportRequests = useCallback(async () => {
     await axios
@@ -65,13 +66,14 @@ const Dashboard = () => {
         withCredentials: true,
       })
       .then((res) => {
-        console.log(res.data)
+        console.log(res.data);
         setCurrentReports(res.data.reports);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
+
   // const getSoldBatches = useCallback(async () => {
   //   await axios
   //     .get("http://localhost:8080/api/user/sold-batches", {
@@ -108,9 +110,6 @@ const Dashboard = () => {
     setCurrentBatch(batchId);
   };
 
- 
-
-
   useEffect(() => {
     if (birdFluWs?.OPEN && currentBatch) {
       console.log("Reading");
@@ -127,11 +126,13 @@ const Dashboard = () => {
         console.log(res.data);
         setBatchSalesData(res.data);
         setLoading(false);
+        setCurrentUser(cookies["user"]);
+        console.log(cookies["user"])
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [cookies]);
 
   const getBatches = useCallback(async () => {
     await axios
@@ -162,8 +163,8 @@ const Dashboard = () => {
           setTransferModalToggle(false);
           getBatches();
           toast(`Batch ${currentBatch} transfered`);
-          setCurrentBatch(null)
-          setNfcCode(null)
+          setCurrentBatch(null);
+          setNfcCode(null);
         });
     }
   }, [nfcCode, getBatches, currentBatch]);
@@ -205,13 +206,11 @@ const Dashboard = () => {
     }
   };
 
-
-
   useEffect(() => {
     startConn();
     getBatches();
     getCurrentReportRequests();
-  }, [startConn, getBatches]);
+  }, [startConn, getBatches, getCurrentReportRequests]);
 
   return loading ? (
     <Loading />
@@ -224,7 +223,9 @@ const Dashboard = () => {
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
           <div className="">
             <h5 className="text-primary text-lg font-semibold">Dashboard</h5>
-            <p className="text-base font-semibold">Hi Sanket ProFarmer</p>
+            <p className="text-base font-semibold">
+              Hi {currentUser ? currentUser.fullName : "Loading..."}{" "}
+            </p>
           </div>
           <div className="h-[35%] flex space-x-4">
             <div className="bg-primary/10 rounded-xl p-5 flex-[1] space-y-2 flex flex-col">
@@ -353,11 +354,13 @@ const Dashboard = () => {
                 Possible flue spread from your farm please test chickens and
                 submit report
               </p>
-             <Link href={"/sample-requests"}> <Button
-                // onClick={() => settoggle(true)}
-                value="Submit report"
-                text="text-xs"
-              />
+              <Link href={"/sample-requests"}>
+                {" "}
+                <Button
+                  // onClick={() => settoggle(true)}
+                  value="Submit report"
+                  text="text-xs"
+                />
               </Link>
             </div>
           ) : null}
@@ -417,7 +420,7 @@ const Dashboard = () => {
           </div>
         </div>
       )}
-      
+
       <ToastContainer toastStyle={{ backgroundColor: "#FFFFFF" }} />
     </div>
   );

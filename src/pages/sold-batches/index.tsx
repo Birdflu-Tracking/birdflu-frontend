@@ -8,12 +8,15 @@ import PieChart from "@/features/ui/PieChart/PieChart";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 import { use, useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { BatchWithBuyer } from "@/types";
+import { BatchWithBuyer, User } from "@/types";
 import { firebaseDateToDate, firebaseDateToTime } from "@/utils";
+import { useCookies } from "react-cookie";
 
 const SoldBatches = () => {
   const [batches, setBatches] = useState<Array<BatchWithBuyer> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [cookies] = useCookies(["user"]);
+  const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
 
   let [links] = useState([
     {
@@ -32,11 +35,10 @@ const SoldBatches = () => {
       icon: "material-symbols:money",
     },
     {
-      name:"Sample Requests",
-      path:"/sample-requests",
+      name: "Sample Requests",
+      path: "/sample-requests",
       icon: "material-symbols:money",
-
-    }
+    },
   ]);
 
   const getBatches = useCallback(async () => {
@@ -56,7 +58,8 @@ const SoldBatches = () => {
 
   useEffect(() => {
     getBatches();
-  }, [getBatches]);
+    setCurrentUser(cookies["user"]);
+  }, [getBatches, cookies]);
 
   return (
     <div className="flex w-screen h-screen bg-secondary ">
@@ -74,27 +77,39 @@ const SoldBatches = () => {
                   <td>Time</td>
                   <td>BatchID</td>
                   <td>Batch Size</td>
-                  <td>Distributor</td>
+                  {currentUser ? (
+                    currentUser.type == "farmer" ? (
+                      <td>Distributor</td>
+                    ) : (
+                      <td>Seller</td>
+                    )
+                  ) : (
+                    ""
+                  )}
                 </tr>
               </thead>
               <tbody className="text-gray-500">
-                {batches
-                  ? batches.map((batch: BatchWithBuyer, index) => (
-                      <tr className="border-b   " key={batch.batchId}>
-                        <td className="py-2">
-                          {firebaseDateToDate(batch.createdAt)}
-                        </td>
-                        <td>{firebaseDateToTime(batch.createdAt)}</td>
-                        <td>{batch.batchId}</td>
-                        <td>{batch.batchSize}</td>
-                        <td>
-                          {batch.buyer
-                            ? batch.buyer.outletName
-                            : "User not found"}
-                        </td>
-                      </tr>
-                    ))
-                  : ""}
+                {batches ? (
+                  batches.map((batch: BatchWithBuyer, index) => (
+                    <tr className="border-b   " key={batch.batchId}>
+                      <td className="py-2">
+                        {firebaseDateToDate(batch.createdAt)}
+                      </td>
+                      <td>{firebaseDateToTime(batch.createdAt)}</td>
+                      <td>{batch.batchId}</td>
+                      <td>{batch.batchSize}</td>
+                      <td>
+                        {batch.buyer
+                          ? batch.buyer.outletName
+                          : "User not found"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td>No Batches</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
