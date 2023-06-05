@@ -4,7 +4,7 @@ import Logo from "@assets/logo/logo.svg";
 import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
 import BarChart from "@/features/ui/BarChart/BarChart";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
 
 //assets
@@ -17,21 +17,21 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import Loading from "@/ui/LoadingScreen/Loading";
-import { User } from "@/types";
+import { SellerReports, User } from "@/types";
+import { firebaseDateToDate } from "@/utils";
 
 const Dashboard = () => {
   const [toggle, settoggle] = useState(false);
   const { sellerId } = useRouter().query;
-  const [sellerReports, setSellerReports] = useState<Array<{
-    reportId: string;
-    reportData: Object;
-  }> | null>(null);
+  const [sellerReports, setSellerReports] =
+    useState<Array<SellerReports> | null>(null);
   const [sellerData, setSellerData] = useState<User | null>(null);
   const [rootFarms, setRootFarms] = useState<Array<{
     farmId: string;
     farmData: User;
   }> | null>();
   const [loading, setLoading] = useState(true);
+  const [sendRequestLoading, setSendRequestLoading] = useState(false);
   const router = useRouter();
 
   const state = {
@@ -61,24 +61,25 @@ const Dashboard = () => {
     },
   ];
 
-  const handleSendFarmReportRequest = async () => {
-    console.log("SENT_FARM_REQUEST");
-
-    rootFarms?.map(async (farm: { farmId: string; farmData: User }) => {
-      try {
-        const res = await axios.post(
-          "http://localhost:8080/api/health-worker/send/symptom/request",
-          { farmId: farm.farmId },
-          {
-            withCredentials: true,
-          }
-        );
-        toast(`Send request to ${farm.farmData.outletName}`);
-        console.log(res.data);
-      } catch (err) {
-        console.log(err);
-      }
-    });
+  const handleSendFarmReportRequest = async (
+    farmId: string,
+    outletName: string
+  ) => {
+    setSendRequestLoading(true);
+    try {
+      const res = await axios.post(
+        "http://localhost:8080/api/health-worker/send/symptom/request",
+        { farmId },
+        {
+          withCredentials: true,
+        }
+      );
+      setSendRequestLoading(false);
+      toast(`Send request to ${outletName}`);
+      console.log(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
@@ -94,9 +95,8 @@ const Dashboard = () => {
         setLoading(false);
       })
       .catch((err) => {
-        if (err.response.status == 404) {
-          console.log(err);
-          router.push("/404")
+        if (err.response.status == 404 && sellerId) {
+          router.push("/404");
         }
       });
   }, [router, sellerId]);
@@ -119,62 +119,86 @@ const Dashboard = () => {
             </div>
             <div className="flex-1 flex-col space-y-6">
               <div className=" flex-1">
-                  <div className="space-y-2">
-                    <h1 className=" font-bold text-xl">About poultry shop </h1>
-                    {sellerData ? (
-                      <div className="flex gap-10">
-                        <div className="">
-                          <h2 className="font-medium text-lg">Shop Name</h2>
-                          <h5 className="fontu-normal text-lg text-gray-500">
-                            {sellerData.outletName}
-                          </h5>
-                        </div>{" "}
-                        <div className="">
-                          <h2 className="font-medium text-lg">Owner Name</h2>
-                          <h5 className="fontu-normal text-lg text-gray-500">
-                            {`${sellerData.fullName} `}
-                          </h5>
-                        </div>{" "}
-                        <div className="">
-                          <h2 className="font-medium text-lg">Phone Number</h2>
-                          <h5 className="fontu-normal text-lg text-gray-500">
-                            {sellerData.phoneNumber}
-                          </h5>
-                        </div>{" "}
-                        <div className="">
-                          <h2 className="font-medium text-lg">Address</h2>
-                          <h5 className="fontu-normal text-lg text-gray-500">
-                            {sellerData.phoneNumber}
-                          </h5>
-                        </div>{" "}
-                      </div>
-                    ) : (
-                      "Loading..."
-                    )}
-                  </div>
-     
+                <div className="space-y-2">
+                  <h1 className=" font-bold text-xl">About poultry shop </h1>
+                  {sellerData ? (
+                    <div className="flex gap-10">
+                      <div className="">
+                        <h2 className="font-medium text-lg">Shop Name</h2>
+                        <h5 className="fontu-normal text-lg text-gray-500">
+                          {sellerData.outletName}
+                        </h5>
+                      </div>{" "}
+                      <div className="">
+                        <h2 className="font-medium text-lg">Owner Name</h2>
+                        <h5 className="fontu-normal text-lg text-gray-500">
+                          {`${sellerData.fullName} `}
+                        </h5>
+                      </div>{" "}
+                      <div className="">
+                        <h2 className="font-medium text-lg">Phone Number</h2>
+                        <h5 className="fontu-normal text-lg text-gray-500">
+                          {sellerData.phoneNumber}
+                        </h5>
+                      </div>{" "}
+                      <div className="">
+                        <h2 className="font-medium text-lg">Address</h2>
+                        <h5 className="fontu-normal text-lg text-gray-500">
+                          {sellerData.phoneNumber}
+                        </h5>
+                      </div>{" "}
+                    </div>
+                  ) : (
+                    "Loading..."
+                  )}
+                </div>
               </div>
               <div className="flex-1 space-y-2">
                 <h1 className=" font-bold text-xl">All Root Farms</h1>
                 <table className="w-full ">
-              <thead className="text-primary font-medium">
-                <tr>
-                  <td>Farm Name</td>
-                  <td>Owner Name</td>
-                  <td>Owner Contact</td>
-                  <td></td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b   ">
-                  <td className="py-2">Mahesh famr</td>
-                  <td className="py-2">mahesh tyagi</td>
-                  <td className="py-2">9030920923</td>
-          
-                  <td className="py-2"><Button value="Request" onClick={()=>{}}/></td>
-                </tr>
-              </tbody>
-            </table>
+                  <thead className="text-primary font-medium">
+                    <tr>
+                      <td>Farm Name</td>
+                      <td>Owner Name</td>
+                      <td>Owner Contact</td>
+                      <td></td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rootFarms
+                      ? rootFarms.map((farm) => {
+                          return (
+                            <tr className="border-b   " key={farm.farmId}>
+                              <td className="py-2">
+                                {farm.farmData.outletName}
+                              </td>
+                              <td className="py-2">{farm.farmData.fullName}</td>
+                              <td className="py-2">
+                                {farm.farmData.phoneNumber}
+                              </td>
+
+                              <td className="py-2">
+                                <Button
+                                  value={
+                                    sendRequestLoading
+                                      ? "Sending request..."
+                                      : "Request"
+                                  }
+                                  disabled={sendRequestLoading}
+                                  onClick={() =>
+                                    handleSendFarmReportRequest(
+                                      farm.farmId,
+                                      farm.farmData.outletName
+                                    )
+                                  }
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })
+                      : "No Root Farms"}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
@@ -193,32 +217,31 @@ const Dashboard = () => {
                 </tr>
               </thead>
               <tbody>
-                {sellerReports ? (
-                  sellerReports.map((sellerReport) => {
-                    return (
-                      <tr className="border-b   " key={sellerReport.reportId}>
-                        <td className="py-2">Rohoit naik</td>
-                        <td>tivim</td>
-                        <td>9158230011</td>
-                        <td>2/3/23</td>
-                        <td>
-                          {" "}
-                          <button onClick={() => settoggle(!toggle)}>
-                            <Icon icon="system-uicons:document" height={30} />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td>Loading...</td>
-                    <td>Loading...</td>
-                    <td>Loading...</td>
-                    <td>Loading...</td>
-                    <td>Loading...</td>
-                  </tr>
-                )}
+                {sellerReports
+                  ? sellerReports.map((sellerReport) => {
+                      console.log(sellerReport);
+                      return (
+                        <tr className="border-b   " key={sellerReport.reportId}>
+                          <td className="py-2">
+                            {sellerReport.reportData.reporterName}
+                          </td>
+                          <td>{sellerReport.reportData.poultryShopName}</td>
+                          <td>{sellerReport.reportData.phoneNumber}</td>
+                          <td>
+                            {firebaseDateToDate(
+                              sellerReport.reportData.symptomStartDate
+                            )}
+                          </td>
+                          <td>
+                            {" "}
+                            <button onClick={() => settoggle(!toggle)}>
+                              <Icon icon="system-uicons:document" height={30} />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : "No Sellers"}
               </tbody>
             </table>
           </div>
