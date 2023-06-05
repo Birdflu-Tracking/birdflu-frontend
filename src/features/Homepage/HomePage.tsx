@@ -19,10 +19,12 @@ const HomePage = () => {
           let response = await axios.get(
             `http://localhost:8080/open/infected-stakeholders`
           );
-          console.log(response.data.infectedUsers);
+          let res2 = await axios.get(
+            `http://localhost:8080/open/active-cases`
+          );
           // Create a new marker.
           setLiveData((prev) => ({
-            ...prev,
+            activeCases:res2.data.activeCases.count,
             affectedFarmers: response.data.infectedUsers.farmer.length,
             affectedSellers: response.data.infectedUsers.seller.length,
           }));
