@@ -91,7 +91,7 @@ const Dashboard = () => {
                       <td>
                         {" "}
                         <Link
-                          href={`/report-details/${reportedSeller.sellerId}`}
+                          href={`/health-dashboard/report-details/${reportedSeller.sellerId}`}
                         >
                           <Icon icon="iconoir:reports" height={30} />
                         </Link>
@@ -119,7 +119,6 @@ const Dashboard = () => {
             <Button
               onClick={() => settoggle(true)}
               value="Take Action"
-              rounded="rounded-full"
               text="text-xs"
             />
           </div>
