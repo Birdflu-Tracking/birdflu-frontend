@@ -4,12 +4,16 @@ import Logo from "@assets/logo/logo.svg";
 import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
 import BarChart from "@/features/ui/BarChart/BarChart";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Multiselect from "multiselect-react-dropdown";
+import "react-toastify/dist/ReactToastify.css";
 
 import HealthSidebar from "@/features/ui/HealthSidebar/HealthSidebar";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 import axios from "axios";
+import { CurrentRequests, User } from "@/types";
+import { firebaseDateToDate } from "@/utils";
+import { ToastContainer, toast } from "react-toastify";
 const Dashboard = () => {
   let links = [
     {
@@ -29,6 +33,60 @@ const Dashboard = () => {
     },
   ];
   const [toggle, settoggle] = useState(false);
+  const [currentRequests, setCurrentRequests] = useState<
+    CurrentRequests | undefined
+  >(undefined);
+
+  const getCurrentRequests = useCallback(async () => {
+    axios
+      .get("http://localhost:8080/api/health-worker/current/requests", {
+        withCredentials: true,
+      })
+      .then(({ data }) => {
+        setCurrentRequests(data.reports);
+      })
+      .catch((err) => {});
+  }, []);
+
+  const handleMarkInfected = async (reportId: string, farmData: User) => {
+    axios
+      .post(
+        "http://localhost:8080/api/health-worker/mark/infected",
+        { requestId: reportId },
+        { withCredentials: true }
+      )
+      .then(() => {
+        toast(`Marked farm ${farmData.outletName} as infected`);
+      })
+      .catch((err) => {
+        if (err.response.status == 400) {
+          toast(`Cannot mark infected, prediction is not available`);
+        }
+        console.log(err);
+      });
+  };
+
+  const handleMarkUnInfected = async (reportId: string, farmData: User) => {
+    axios
+      .post(
+        "http://localhost:8080/api/health-worker/mark/uninfected",
+        { requestId: reportId },
+        { withCredentials: true }
+      )
+      .then(() => {
+        toast(`Marked farm ${farmData.outletName} as uninfected`);
+      })
+      .catch((err) => {
+        if (err.response.status == 400) {
+          toast(`Cannot mark uninfected, prediction is not available`);
+        }
+        console.log(err);
+      });
+  };
+
+  useEffect(() => {
+    getCurrentRequests();
+  }, [getCurrentRequests]);
 
   return (
     <div className="flex w-screen h-screen bg-secondary ">
@@ -46,24 +104,127 @@ const Dashboard = () => {
                 <tr>
                   <td>Request Id</td>
                   <td>Requested At</td>
-                  <td>Requested Farmer</td>
+                  <td>Farmer</td>
                   <td>Submitted At </td>
                   <td>Flu Status</td>
                   <td>ML Prediction</td>
                   <td></td>
+                  <td></td>
                 </tr>
               </thead>
               <tbody>
-                <tr className="border-b   ">
-                  <td className="py-2">dsadsdds</td>
-                  <td className="py-2">10/2/23</td>
-                  <td className="py-2">Farmer XYX</td>
-                  <td className="py-2">10/2/23</td>
-
-                  <td className="py-2">Not available</td>
-                  <td className="py-2">Not available</td>
-                  <td className="py-2"><Button value="Mark Affcted" onClick={()=>{}}/></td>
-                </tr>
+                {currentRequests?.submitted
+                  ? currentRequests.submitted.map((request) => {
+                      return (
+                        <tr className="border-b   " key={request.reportId}>
+                          <td className="py-2">
+                            {request.reportId.substring(0, 9)}...
+                          </td>
+                          <td className="py-2">
+                            {firebaseDateToDate(request.reportData.initiatedAt)}
+                          </td>
+                          <td className="py-2">
+                            {request.farmData.outletName}
+                          </td>
+                          <td className="py-2">
+                            {request.reportData.submitted
+                              ? firebaseDateToDate(
+                                  request.reportData.submittedAt
+                                )
+                              : "Not Submitted"}
+                          </td>
+                          <td className="py-2">
+                            {request.farmData.infected
+                              ? "Affected"
+                              : "Not Affected"}
+                          </td>
+                          <td className="py-2">
+                            {request.reportData.predictionResult == null
+                              ? "-"
+                              : request.reportData.predictionResult}
+                          </td>
+                          <td className="py-2">
+                            <Button
+                              value="Mark Affected"
+                              onClick={() =>
+                                handleMarkInfected(
+                                  request.reportId,
+                                  request.farmData
+                                )
+                              }
+                            />
+                          </td>
+                          <td className="py-2">
+                            <Button
+                              value="Mark UnAffected"
+                              onClick={() =>
+                                handleMarkUnInfected(
+                                  request.reportId,
+                                  request.farmData
+                                )
+                              }
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : ""}
+                {currentRequests?.notSubmitted
+                  ? currentRequests.notSubmitted.map((request) => {
+                      return (
+                        <tr className="border-b   " key={request.reportId}>
+                          <td className="py-2">
+                            {request.reportId.substring(0, 9)}...
+                          </td>
+                          <td className="py-2">
+                            {firebaseDateToDate(request.reportData.initiatedAt)}
+                          </td>
+                          <td className="py-2">
+                            {request.farmData.outletName}
+                          </td>
+                          <td className="py-2">
+                            {request.reportData.submitted
+                              ? firebaseDateToDate(
+                                  request.reportData.submittedAt
+                                )
+                              : "Not Submitted"}
+                          </td>
+                          <td className="py-2">
+                            {request.farmData.infected
+                              ? "Affected"
+                              : "Not Affected"}
+                          </td>
+                          <td className="py-2">
+                            {request.reportData.predictionResult == null
+                              ? "Not Available"
+                              : request.reportData.predictionResult}
+                          </td>
+                          <td className="py-2">
+                            <Button
+                              value="Mark Affected"
+                              onClick={() =>
+                                handleMarkInfected(
+                                  request.reportId,
+                                  request.farmData
+                                )
+                              }
+                            />
+                          </td>
+                          <td className="py-2">
+                            <Button
+                              value="Mark unaffected"
+                              onClick={() =>
+                                handleMarkUnInfected(
+                                  request.reportId,
+                                  request.farmData
+                                )
+                              }
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  : ""}
               </tbody>
             </table>
           </div>
@@ -101,6 +262,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+      <ToastContainer toastStyle={{ backgroundColor: "#FFFFFF" }} />
     </div>
   );
 };

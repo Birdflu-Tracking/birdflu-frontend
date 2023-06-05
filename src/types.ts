@@ -51,6 +51,32 @@ export type FarmReports = {
   initiatedAt: Timestamp;
   submittedAt: Timestamp;
   submitted: boolean;
-  predictionResult: boolean;
+  predictionResult: string;
   chickenSymptoms: Array<object>;
+};
+
+export type SellerReports = {
+  reportId: string;
+  reportData: {
+    address: string;
+    createdAt: Timestamp;
+    phoneNumber: number;
+    poultryShopDocId: string;
+    poultryShopName: string;
+    reporterName: string;
+    symptomStartDate: Timestamp;
+  };
+};
+
+export type CurrentRequests = {
+  submitted: Array<{
+    reportId: string;
+    reportData: FarmReports;
+    farmData: User;
+  }>;
+  notSubmitted: Array<{
+    reportId: string;
+    reportData: FarmReports;
+    farmData: User;
+  }>;
 };
