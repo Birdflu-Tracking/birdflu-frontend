@@ -35,8 +35,8 @@ const SignIn = () => {
         );
 
         const idToken = await user.getIdToken();
-        console.log({ idToken })
-        return;
+        console.log({ idToken });
+
         await axios
           .post(
             `${

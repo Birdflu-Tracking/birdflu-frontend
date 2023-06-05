@@ -37,7 +37,12 @@ const Dashboard = () => {
     },
     {
       name: "Reports",
-      path: "/health-reports",
+      path: "/health-dashboard/reports",
+      icon: "material-symbols:inventory-2",
+    },
+    {
+      name: "Sample Requests",
+      path: "/health-dashboard/sample-requests",
       icon: "material-symbols:inventory-2",
     },
   ];

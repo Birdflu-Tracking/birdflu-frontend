@@ -28,17 +28,17 @@ const Dashboard = () => {
     },
     {
       name: "Inventory",
-      path: "/inventory",
+      path: "/dashboard/inventory",
       icon: "material-symbols:inventory-2",
     },
     {
       name: "Sold Batches",
-      path: "/sold-batches",
+      path: "/dashboard/sold-batches",
       icon: "material-symbols:money",
     },
     {
       name: "Sample Requests",
-      path: "/sample-requests",
+      path: "/dashboard/sample-requests",
       icon: "material-symbols:money",
     },
   ];

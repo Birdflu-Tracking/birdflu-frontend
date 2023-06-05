@@ -8,12 +8,17 @@ import PieChart from "@/features/ui/PieChart/PieChart";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 import { use, useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import { Batch } from "@/types";
+import { BatchWithBuyer, User } from "@/types";
 import { firebaseDateToDate, firebaseDateToTime } from "@/utils";
-const Inventory = () => {
-  const [batches, setBatches] = useState<Array<Batch> | null>(null);
+import { useCookies } from "react-cookie";
+
+const SoldBatches = () => {
+  const [batches, setBatches] = useState<Array<BatchWithBuyer> | null>(null);
   const [loading, setLoading] = useState(false);
-  let [links] = useState([
+  const [cookies] = useCookies(["user"]);
+  const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
+
+  const links = [
     {
       name: "Dashboard",
       path: "/dashboard",
@@ -21,25 +26,26 @@ const Inventory = () => {
     },
     {
       name: "Inventory",
-      path: "/inventory",
+      path: "/dashboard/inventory",
       icon: "material-symbols:inventory-2",
     },
     {
       name: "Sold Batches",
-      path: "/sold-batches",
+      path: "/dashboard/sold-batches",
       icon: "material-symbols:money",
     },
     {
-      name:"Sample Requests",
-      path:"/sample-requests",
+      name: "Sample Requests",
+      path: "/dashboard/sample-requests",
       icon: "material-symbols:money",
-
-    }
-  ]);
+    },
+  ];
 
   const getBatches = useCallback(async () => {
     await axios
-      .get("http://localhost:8080/api/user/batches", { withCredentials: true })
+      .get("http://localhost:8080/api/user/sold-batches", {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res.data);
         setBatches(res.data.batches);
@@ -52,7 +58,9 @@ const Inventory = () => {
 
   useEffect(() => {
     getBatches();
-  }, [getBatches]);
+    setCurrentUser(cookies["user"]);
+  }, [getBatches, cookies]);
+
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
@@ -60,7 +68,7 @@ const Inventory = () => {
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
-          <h1 className="text-primary text-3xl font-bold">Inventory</h1>
+          <h1 className="text-primary text-3xl font-bold">Sold Batches</h1>
           <div className="p-5 ">
             <table className="w-full ">
               <thead className="text-primary font-semibold text-xl">
@@ -69,23 +77,39 @@ const Inventory = () => {
                   <td>Time</td>
                   <td>BatchID</td>
                   <td>Batch Size</td>
-                  {/* <td>Distributor</td> */}
+                  {currentUser ? (
+                    currentUser.type == "farmer" ? (
+                      <td>Distributor</td>
+                    ) : (
+                      <td>Seller</td>
+                    )
+                  ) : (
+                    ""
+                  )}
                 </tr>
               </thead>
               <tbody className="text-gray-500">
-                {batches
-                  ? batches.map((batch: Batch, index) => (
-                      <tr className="border-b   " key={batch.batchId}>
-                        <td className="py-2">
-                          {firebaseDateToDate(batch.createdAt)}
-                        </td>
-                        <td>{firebaseDateToTime(batch.createdAt)}</td>
-                        <td>{batch.batchId}</td>
-                        <td>{batch.batchSize}</td>
-                        {/* <td>{}</td> */}
-                      </tr>
-                    ))
-                  : ""}
+                {batches ? (
+                  batches.map((batch: BatchWithBuyer, index) => (
+                    <tr className="border-b   " key={batch.batchId}>
+                      <td className="py-2">
+                        {firebaseDateToDate(batch.createdAt)}
+                      </td>
+                      <td>{firebaseDateToTime(batch.createdAt)}</td>
+                      <td>{batch.batchId}</td>
+                      <td>{batch.batchSize}</td>
+                      <td>
+                        {batch.buyer
+                          ? batch.buyer.outletName
+                          : "User not found"}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td>No Batches</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -127,4 +151,4 @@ const Inventory = () => {
   );
 };
 
-export default Inventory;
+export default SoldBatches;
