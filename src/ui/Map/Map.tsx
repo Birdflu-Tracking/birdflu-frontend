@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { Ref, useEffect, useRef, useState } from "react";
 import { MapBox } from "@/config/mapbox.config";
 import { renderToString } from "react-dom/server";
 import mapboxgl from "mapbox-gl";
-// type MapProps = {
-//   locations: { cords: mapboxgl.LngLatLike; rcl: number }[];
-//   // setMapBox: () => void;
-// };
-const Map: React.FC = () => {
+type MapProps = {
+  // locations: { cords: mapboxgl.LngLatLike; rcl: number }[];
+  setMapBox?: (mapBox: any) => void;
+};
+const Map: React.FC<MapProps> = ({ setMapBox }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const map = useRef<any>();
   useEffect(() => {
@@ -21,41 +21,10 @@ const Map: React.FC = () => {
         //@ts-ignore
         long: 15.5949654,
       },
-    });
-    // Create a new marker.
-    // for (const location of locations) {
-    //   const el = document.createElement("div");
-    //   const label = document.createElement("div");
-    //   const icon = document.createElement("div");
-
-    //   el.className = "marker";
-    //   icon.style.backgroundImage = "url(/images/location-marker.svg)";
-    //   icon.style.backgroundRepeat = "no-repeat";
-    //   icon.style.width = `30px`;
-    //   icon.style.height = `30px`;
-    //   icon.style.backgroundSize = "100%";
-
-    //   // icon.style.backgroundColor = "blue";
-    //   label.innerHTML = renderToString(
-    //     <LabelQuality
-    //       outline
-    //       value={location.rcl}
-    //       varient={checkChlorineHealth(location.rcl)}
-    //     />
-    //   );
-    //   label.style.marginBottom = "5px";
-    //   el.appendChild(label);
-    //   el.appendChild(icon);
-    //   const marker = new mapboxgl.Marker(el)
-    //     .setLngLat(location.cords)
-    //     .addTo(map.current);
-    // }
-    // //creates a marker to display saafwater selected device location
-    // const marker1 = new mapboxgl.Marker({ color: "blue" })
-    //   // .setLngLat([data.long, data.lat])
-    //   .addTo(map.current);
-
-    // setMapBox(map.current);
+    })
+    if (setMapBox) {
+      setMapBox(map.current);
+    }
   });
   return (
     <div className="relative h-full w-full">

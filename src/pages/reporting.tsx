@@ -4,13 +4,16 @@ import { FormInput } from "@/ui/FormInput/FormInput";
 import { PrimaryButton } from "@/ui/PrimaryButton/PrimaryButton";
 import axios from "axios";
 import { error } from "console";
-import React, { use, useEffect, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
+import Map from "@/ui/Map/Map";
 
 import { v4 as uuidv4 } from "uuid";
+import mapboxgl from "mapbox-gl";
 export type ReportingDataType = {
   fullName: string | undefined;
   address: string | undefined;
   contact: string | undefined;
+  cords: [number, number] | undefined;
   poultryShop:
     | {
         key: string;
@@ -20,8 +23,12 @@ export type ReportingDataType = {
   symtompsStartDate: string | undefined;
 };
 export default function Reporting() {
+  const [toggle, settoggle] = useState(false);
+  const addRef = useRef(null);
+
   const [loading, setLoading] = useState(false);
   const [sellers, setSellerShops] = useState([]);
+  const [mapBox, setMapBox] = useState<any | undefined>(undefined);
   const [selectedSeller, setSelectedSeller] = useState<{
     key: string;
     label: string;
@@ -29,11 +36,27 @@ export default function Reporting() {
   const [data, setData] = useState<ReportingDataType>({
     fullName: undefined,
     address: undefined,
+    cords: undefined,
     contact: undefined,
     poultryShop: undefined,
     symtompsStartDate: undefined,
   });
-
+  useEffect(() => {
+    let marker = undefined;
+    if (mapBox) {
+      mapBox.on("click", (event) => {
+        let cordinates = event.lngLat;
+        setData((prev) => ({
+          ...prev,
+          cords:cordinates
+        }));
+        if (marker) {
+          marker.remove();
+        }
+        marker = new mapboxgl.Marker().setLngLat(cordinates).addTo(mapBox);
+      });
+    }
+  }, [mapBox]);
   function handleSubmit(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     console.log(data);
@@ -42,7 +65,8 @@ export default function Reporting() {
       data.address &&
       data.contact &&
       data.poultryShop &&
-      data.symtompsStartDate
+      data.symtompsStartDate &&
+      data.cords
     ) {
       console.log("sending");
       setLoading(true);
@@ -54,6 +78,7 @@ export default function Reporting() {
           poultryShopDocId: data.poultryShop.key,
           symptomStartDate: data.symtompsStartDate,
           address: data.address,
+          cords: data.cords,
         })
         .then(() => {
           setLoading(false);
@@ -89,9 +114,9 @@ export default function Reporting() {
     );
   }, [selectedSeller]);
   return (
-    <>
+    <div className="relative h-screen w-full">
       <Navbar />
-      <div className="container mx-auto py-16 px-16">
+      <div className="relative container mx-auto py-16 px-16">
         <h1 className="text-3xl font-bold">Reporting Form</h1>
         <form className="flex">
           {/* Reporters user data */}
@@ -140,6 +165,12 @@ export default function Reporting() {
                 return (
                   <FormInput
                     required
+                    onClick={()=>{
+                      if(item.dataName==="address"){
+                        settoggle(true)
+                      }
+                    }}
+                    value={item.dataName === "address" ? data.address : null}
                     label={item.label}
                     placeholder={item.placeholder}
                     setSellerOption={setSelectedSeller}
@@ -182,7 +213,6 @@ export default function Reporting() {
             </p>
             <Button
               value="Submit"
-              rounded="rounded-md"
               onClick={(e) => handleSubmit(e)}
               disabled={loading == true}
             />
@@ -199,6 +229,51 @@ export default function Reporting() {
           </div>
         </form>
       </div>
-    </>
+        {toggle && (
+          <div className="fixed top-0 h-screen w-screen bg-gray-400/30 flex items-center justify-center">
+            <div className="relative h-1/2 w-1/2 rounded-lg shadow-lg bg-white p-6 flex flex-col">
+              <div className="flex justify-between pb-4">
+                <p className="font-semibold">Select your location</p>{" "}
+                <button onClick={() => settoggle(false)}>X</button>
+              </div>
+              <div className="flex-1 flex gap-5">
+                <div className="flex-1  overflow-hidden rounded-xl">
+                  {" "}
+                  <Map setMapBox={(map) => setMapBox(map)} />{" "}
+                </div>
+                <div className="flex-1 gap-10 flex flex-col items-end w-full">
+                  <div className=" flex flex-col gap-2 w-full ">
+                    <label htmlFor="" className="text-lg font-medium">
+                      Outlet Address
+                    </label>
+                    <textarea
+                      onChange={(e) => {
+                        //@ts-ignore
+                        setData((data) => ({
+                          ...data,
+                          address: e.target.value,
+                        }));
+                      }}
+                      name=""
+                      id=""
+                      rows={5}
+                      placeholder="your address"
+                      className="rounded-md p-3 border border-black/10 focus:outline-none font-light w-full"
+                    />
+                  </div>
+                  <Button
+                    value="Next"
+                    onClick={() => {
+                      if (data.cords && data.address) {
+                        settoggle(false);
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+    </div>
   );
 }

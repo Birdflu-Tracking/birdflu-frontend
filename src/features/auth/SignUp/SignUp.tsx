@@ -5,14 +5,17 @@ import Button from "@/ui/Button/Button";
 import Logo from "@assets/logo/logo.svg";
 import Graphic from "@assets/Images/Topographic.svg";
 import Graphic1 from "@assets/Images/kombdi.svg";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Map from "@/ui/Map/Map";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import mapboxgl from "mapbox-gl";
 
 const SignUp = () => {
   const [toggle, settoggle] = useState(false);
+  const [mapBox, setMapBox] = useState<any | undefined>(undefined);
+  const addRef = useRef(null);
   const [data, setData] = useState({
     user_type: "farmer",
     full_name: undefined,
@@ -21,11 +24,30 @@ const SignUp = () => {
     phone_number: undefined,
     outlet_name: undefined,
     outlet_address: undefined,
+    latitude: undefined,
+    longitude: undefined,
   });
   const [errors, setErrors] = useState<string>("");
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  useEffect(() => {
+    let marker = undefined;
+    if (mapBox) {
+      mapBox.on("click", (event) => {
+        let cordinates = event.lngLat;
+        setData((prev) => ({
+          ...prev,
+          latitude: cordinates.lat,
+          longitude: cordinates.lng,
+        }));
+        console.log(cordinates);
+        if (marker) {
+          marker.remove();
+        }
+        marker = new mapboxgl.Marker().setLngLat(cordinates).addTo(mapBox);
+      });
+    }
+  }, [mapBox]);
   const router = useRouter();
   useEffect(() => {
     setTimeout(() => {
@@ -54,19 +76,21 @@ const SignUp = () => {
       data.password &&
       data.outlet_address &&
       data.outlet_name &&
-      data.phone_number
+      data.phone_number &&
+      data.latitude &&
+      data.longitude
     ) {
       setLoading(true);
       axios
         .post(`http://localhost:8080/api/auth/create/${data.user_type}`, {
-          fullName:data.full_name,
+          fullName: data.full_name,
           email: data.email,
-          password:data.password,
+          password: data.password,
           phoneNumber: data.phone_number,
           outletAddress: data.outlet_address,
           outletName: data.outlet_name,
-          latitude: 1212,
-          longitude: 1212,
+          latitude: data.latitude,
+          longitude: data.longitude,
         })
         .then((d) => {
           console.log(d);
@@ -80,7 +104,7 @@ const SignUp = () => {
           if (err.response.data.code == "auth/email-already-exists") {
             setErrors("User already Exist please login");
           }
-          if(err.code === "ERR_NETWORK") {
+          if (err.code === "ERR_NETWORK") {
             setErrors("No internet");
           }
         });
@@ -205,27 +229,22 @@ const SignUp = () => {
             <label htmlFor="">Outlet address</label>
             <input
               type="text"
+              ref={addRef}
               className="rounded-md p-3 border border-black/10 focus:outline-none font-light"
               placeholder="mapusa"
               onClick={() => settoggle(true)}
-              onChange={(e) => {
-                //@ts-ignore
-                setData((data) => ({
-                  ...data,
-                  outlet_address: e.target.value,
-                }));
-              }}
               required
             />
           </div>
           <Button
-              value={loading?"Registering...":"Sign Up"}
-              onClick={() => handleSignup()}
-            disabled={loading==true}
+            value={loading ? "Registering..." : "Sign Up"}
+            onClick={() => handleSignup()}
+            disabled={loading == true}
           />
         </form>
         <p className="text-center">
-          Already have an account ?          <Link
+          Already have an account ?{" "}
+          <Link
             href="/auth/signin"
             className="text-primary font-semibold ml-2  "
           >
@@ -254,8 +273,45 @@ const SignUp = () => {
               <p className="font-semibold">Select your location</p>{" "}
               <button onClick={() => settoggle(false)}>X</button>
             </div>
-            <div className="flex-1 overflow-hidden rounded-md">
-              <Map />{" "}
+            <div className="flex-1 flex gap-5">
+              <div className="flex-1  overflow-hidden rounded-xl">
+                {" "}
+                <Map setMapBox={(map) => setMapBox(map)} />{" "}
+              </div>
+              <div className="flex-1 gap-10 flex flex-col items-end w-full">
+                <div className=" flex flex-col gap-2 w-full ">
+                  <label htmlFor="" className="text-lg font-medium">
+                    Outlet Address
+                  </label>
+                  <textarea
+                    onChange={(e) => {
+                      //@ts-ignore
+                      setData((data) => ({
+                        ...data,
+                        outlet_address: e.target.value,
+                      }));
+                    }}
+                    name=""
+                    id=""
+                    rows={5}
+                    placeholder="your address"
+                    className="rounded-md p-3 border border-black/10 focus:outline-none font-light w-full"
+                  />
+                </div>
+                <Button
+                  value="Next"
+                  onClick={() => {
+                    if (
+                      data.latitude &&
+                      data.longitude &&
+                      data.outlet_address
+                    ) {
+                      addRef.current.value = data.outlet_address;
+                      settoggle(false);
+                    }
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>

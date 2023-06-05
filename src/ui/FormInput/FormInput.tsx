@@ -1,11 +1,15 @@
 import { ReportingDataType } from "@/pages/reporting";
 import SearchIcon from "@mui/icons-material/Search";
 import { InputProps } from "@mui/material";
-import { DetailedHTMLProps, InputHTMLAttributes } from "react";
+import { DetailedHTMLProps, InputHTMLAttributes, Ref } from "react";
 import ReactSearchBox from "react-search-box";
 import Select from "react-select";
 
-interface FormInputPropType extends InputHTMLAttributes<HTMLInputElement> {
+interface FormInputPropType
+  extends DetailedHTMLProps<
+    InputHTMLAttributes<HTMLInputElement>,
+    HTMLInputElement
+  > {
   label: string;
   type: string;
   setSellerOption: any;
