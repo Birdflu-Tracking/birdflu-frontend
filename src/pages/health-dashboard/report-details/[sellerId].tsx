@@ -112,15 +112,14 @@ const Dashboard = () => {
                 <Map />
               </div>
             </div>
-            <div className="flex-1 flex divide-x-2">
+            <div className="flex-1 flex-col space-y-6">
               <div className=" flex-1">
-                <div className="space-y-10">
                   <div className="space-y-2">
                     <h1 className=" font-bold text-xl">About poultry shop </h1>
                     {sellerData ? (
-                      <div className="space-y-2">
+                      <div className="flex gap-10">
                         <div className="">
-                          <h2 className="font-medium text-lg">Name</h2>
+                          <h2 className="font-medium text-lg">Shop Name</h2>
                           <h5 className="fontu-normal text-lg text-gray-500">
                             {sellerData.outletName}
                           </h5>
@@ -128,11 +127,17 @@ const Dashboard = () => {
                         <div className="">
                           <h2 className="font-medium text-lg">Owner Name</h2>
                           <h5 className="fontu-normal text-lg text-gray-500">
-                            {`${sellerData.firstName} ${sellerData.lastName}`}
+                            {`${sellerData.fullName} `}
                           </h5>
                         </div>{" "}
                         <div className="">
                           <h2 className="font-medium text-lg">Phone Number</h2>
+                          <h5 className="fontu-normal text-lg text-gray-500">
+                            {sellerData.phoneNumber}
+                          </h5>
+                        </div>{" "}
+                        <div className="">
+                          <h2 className="font-medium text-lg">Address</h2>
                           <h5 className="fontu-normal text-lg text-gray-500">
                             {sellerData.phoneNumber}
                           </h5>
@@ -142,86 +147,29 @@ const Dashboard = () => {
                       "Loading..."
                     )}
                   </div>
-                  <div className="">
-                    <h1 className=" font-bold text-xl">About Root Famer </h1>
-                    {rootFarms
-                      ? rootFarms.map((farm) => {
-                          return (
-                            <div className="space-y-2" key={farm.farmId}>
-                              <div className="">
-                                <h2 className="font-medium text-lg">Name</h2>
-                                <h5 className="fontu-normal text-lg text-gray-500">
-                                  {farm.farmData.outletName}
-                                </h5>
-                              </div>{" "}
-                              <div className="">
-                                <h2 className="font-medium text-lg">
-                                  Owner Name
-                                </h2>
-                                <h5 className="fontu-normal text-lg text-gray-500">
-                                  {`${farm.farmData.firstName} ${farm.farmData.lastName}`}
-                                </h5>
-                              </div>{" "}
-                              <div className="">
-                                <h2 className="font-medium text-lg">
-                                  Phone Number
-                                </h2>
-                                <h5 className="fontu-normal text-lg text-gray-500">
-                                  {farm.farmData.phoneNumber}
-                                </h5>
-                              </div>
-                            </div>
-                          );
-                        })
-                      : "Loading..."}
-                  </div>
-                </div>
+     
               </div>
-              <div className="flex-1 space-y-5 pl-5">
-                <h1 className=" font-bold text-xl">Infection status </h1>
-                <div className="space-y-4">
-                  <div className="">
-                    <h2 className="font-medium text-lg">Infected</h2>
-                    <h5 className="fontu-normal text-lg text-gray-500">
-                      {sellerData
-                        ? sellerData.infected
-                          ? "Infected"
-                          : "No Infected"
-                        : "Loading"}
-                    </h5>
-                  </div>{" "}
-                  <div className="">
-                    <h2 className="font-medium text-lg">
-                      Farmer report ML result
-                    </h2>
-                    <h5 className="fontu-normal text-lg text-gray-500">
-                      Avian Influenza
-                    </h5>
-                  </div>{" "}
-                  <div className="">
-                    <h2 className="font-medium text-lg">
-                      Report Request Status
-                    </h2>
-                    <h5 className="fontu-normal text-lg text-gray-500">
-                      Not requested{" "}
-                    </h5>
-                  </div>{" "}
-                  <div className="">
-                    <button
-                      className="bg-red-600 p-2 rounded-full w-full text-white"
-                      onClick={() => {
-                        handleSendFarmReportRequest();
-                      }}
-                    >
-                      Request A Report from farmer
-                    </button>
-                  </div>
-                  <div className="">
-                    <button className="bg-red-600 p-2 rounded-full w-full text-white">
-                      Mark as Affected
-                    </button>
-                  </div>
-                </div>
+              <div className="flex-1 space-y-2">
+                <h1 className=" font-bold text-xl">All Root Farms</h1>
+                <table className="w-full ">
+              <thead className="text-primary font-medium">
+                <tr>
+                  <td>Farm Name</td>
+                  <td>Owner Name</td>
+                  <td>Owner Contact</td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b   ">
+                  <td className="py-2">Mahesh famr</td>
+                  <td className="py-2">mahesh tyagi</td>
+                  <td className="py-2">9030920923</td>
+          
+                  <td className="py-2"><Button value="Request" onClick={()=>{}}/></td>
+                </tr>
+              </tbody>
+            </table>
               </div>
             </div>
           </div>
