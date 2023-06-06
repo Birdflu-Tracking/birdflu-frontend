@@ -252,9 +252,14 @@ const Dashboard = () => {
                           </td>
                           <td>
                             {" "}
-                            <button onClick={() => settoggle(!toggle)}>
-                              <Icon icon="system-uicons:document" height={30} />
-                            </button>
+                            <Link href={sellerReport.reportData.doctorLetterUrl} target="_blank">
+                              <button onClick={() => settoggle(!toggle)}>
+                                <Icon
+                                  icon="system-uicons:document"
+                                  height={30}
+                                />
+                              </button>
+                            </Link>
                           </td>
                         </tr>
                       );

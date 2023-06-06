@@ -17,4 +17,4 @@ const firestore = getFirestore(app);
 const auth = getAuth(app);
 auth.settings.appVerificationDisabledForTesting = true;
 
-export { auth, firestore };
+export { auth, firestore, app };

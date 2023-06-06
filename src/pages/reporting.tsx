@@ -5,10 +5,18 @@ import { PrimaryButton } from "@/ui/PrimaryButton/PrimaryButton";
 import axios from "axios";
 import { error } from "console";
 import React, { use, useEffect, useRef, useState } from "react";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
 import Map from "@/ui/Map/Map";
 
 import { v4 as uuidv4 } from "uuid";
 import mapboxgl from "mapbox-gl";
+import { app } from "@/config/firebaseback.config";
 export type ReportingDataType = {
   fullName: string | undefined;
   address: string | undefined;
@@ -29,6 +37,7 @@ export default function Reporting() {
   const [loading, setLoading] = useState(false);
   const [sellers, setSellerShops] = useState([]);
   const [mapBox, setMapBox] = useState<any | undefined>(undefined);
+  const [letter, setLetter] = useState(null);
   const [selectedSeller, setSelectedSeller] = useState<{
     key: string;
     label: string;
@@ -58,9 +67,18 @@ export default function Reporting() {
       });
     }
   }, [mapBox]);
-  function handleSubmit(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  async function handleSubmit(
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) {
     e.preventDefault();
-    console.log(data);
+    console.log(
+      data.fullName,
+      data.address,
+      data.contact,
+      data.poultryShop,
+      data.symtompsStartDate,
+      data.cords
+    );
     if (
       data.fullName &&
       data.address &&
@@ -71,6 +89,10 @@ export default function Reporting() {
     ) {
       console.log("sending");
       setLoading(true);
+      const storage = getStorage(app);
+      const storageRef = ref(storage, `${letter.name}`);
+      await uploadBytesResumable(storageRef, letter);
+
       axios
         .post("http://localhost:8080/open/submit-flu-report", {
           reporterName: data.fullName,
@@ -80,6 +102,7 @@ export default function Reporting() {
           symptomStartDate: data.symtompsStartDate,
           address: data.address,
           cords: data.cords,
+          doctorLetterUrl: await getDownloadURL(storageRef),
         })
         .then(() => {
           setLoading(false);
@@ -103,6 +126,17 @@ export default function Reporting() {
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const imgAdded = (event: Event) => {
+    if (event && event.target?.files[0].size > 100000000) {
+      // toast.error("😢️ PDF size should be less than 100MB!", toastStyles.error);
+      setLetter(event.target?.files[0]);
+    } else {
+      setLetter(event.target?.files[0]);
+      // setPdf(event.target.files[0]);
+      // setPdfPreviewUrl(URL.createObjectURL(event.target.files[0]));
+    }
   };
 
   useEffect(() => {
@@ -166,9 +200,9 @@ export default function Reporting() {
                 return (
                   <FormInput
                     required
-                    onClick={()=>{
-                      if(item.dataName==="address"){
-                        settoggle(true)
+                    onClick={() => {
+                      if (item.dataName === "address") {
+                        settoggle(true);
                       }
                     }}
                     value={item.dataName === "address" ? data.address : null}
@@ -213,7 +247,7 @@ export default function Reporting() {
               sell your use your data without your permissions.
             </p>
             <Button
-              value="Submit"
+              value={loading ? "Submitting..." : "Submit"}
               onClick={(e) => handleSubmit(e)}
               disabled={loading == true}
             />
@@ -223,58 +257,86 @@ export default function Reporting() {
           <div className="px-20 py-8 text-center w-max">
             <p className="text-xl mb-3">Upload your doctors letter</p>
             <div className="p-10 text-center border-dotted border-2 border-primary rounded-lg">
-              <PrimaryButton label="Upload" className={"px-14 mb-1"} />
-              <p>or Drag and drop files</p>
-              <p>file format .jpeg, .png. max file size 1mb</p>
+              {/* <PrimaryButton label="Upload" className={"px-14 mb-1"} /> */}
+              <input
+                type="file"
+                name="upload"
+                id="upload-pdf"
+                hidden
+                onChange={imgAdded}
+                required
+              />
+              <p>
+                <label
+                  htmlFor="upload-pdf"
+                  className={
+                    "px-14 mb-1 bg-primary font-bold py-3 rounded-xl text-white w-max border-none cursor-pointer"
+                  }
+                >
+                  Choose File
+                </label>
+              </p>
+              {letter ? (
+                <>
+                  <p className="mt-4">{letter.name}</p>
+                  <p>or Drag and drop files</p>
+                  <p>file format .jpeg, .png. max file size 1mb</p>
+                </>
+              ) : (
+                <>
+                  <p className="mt-4">or Drag and drop files</p>
+                  <p>file format .jpeg, .png. max file size 1mb</p>
+                </>
+              )}
             </div>
           </div>
         </form>
       </div>
-        {toggle && (
-          <div className="fixed top-0 h-screen w-screen bg-gray-400/30 flex items-center justify-center">
-            <div className="relative h-1/2 w-1/2 rounded-lg shadow-lg bg-white p-6 flex flex-col">
-              <div className="flex justify-between pb-4">
-                <p className="font-semibold">Select your location</p>{" "}
-                <button onClick={() => settoggle(false)}>X</button>
+      {toggle && (
+        <div className="fixed top-0 h-screen w-screen bg-gray-400/30 flex items-center justify-center">
+          <div className="relative h-1/2 w-1/2 rounded-lg shadow-lg bg-white p-6 flex flex-col">
+            <div className="flex justify-between pb-4">
+              <p className="font-semibold">Select your location</p>{" "}
+              <button onClick={() => settoggle(false)}>X</button>
+            </div>
+            <div className="flex-1 flex gap-5">
+              <div className="flex-1  overflow-hidden rounded-xl">
+                {" "}
+                <Map setMapBox={(map) => setMapBox(map)} />{" "}
               </div>
-              <div className="flex-1 flex gap-5">
-                <div className="flex-1  overflow-hidden rounded-xl">
-                  {" "}
-                  <Map setMapBox={(map) => setMapBox(map)} />{" "}
-                </div>
-                <div className="flex-1 gap-10 flex flex-col items-end w-full">
-                  <div className=" flex flex-col gap-2 w-full ">
-                    <label htmlFor="" className="text-lg font-medium">
-                      Outlet Address
-                    </label>
-                    <textarea
-                      onChange={(e) => {
-                        //@ts-ignore
-                        setData((data) => ({
-                          ...data,
-                          address: e.target.value,
-                        }));
-                      }}
-                      name=""
-                      id=""
-                      rows={5}
-                      placeholder="your address"
-                      className="rounded-md p-3 border border-black/10 focus:outline-none font-light w-full"
-                    />
-                  </div>
-                  <Button
-                    value="Next"
-                    onClick={() => {
-                      if (data.cords && data.address) {
-                        settoggle(false);
-                      }
+              <div className="flex-1 gap-10 flex flex-col items-end w-full">
+                <div className=" flex flex-col gap-2 w-full ">
+                  <label htmlFor="" className="text-lg font-medium">
+                    Outlet Address
+                  </label>
+                  <textarea
+                    onChange={(e) => {
+                      //@ts-ignore
+                      setData((data) => ({
+                        ...data,
+                        address: e.target.value,
+                      }));
                     }}
+                    name=""
+                    id=""
+                    rows={5}
+                    placeholder="your address"
+                    className="rounded-md p-3 border border-black/10 focus:outline-none font-light w-full"
                   />
                 </div>
+                <Button
+                  value="Next"
+                  onClick={() => {
+                    if (data.cords && data.address) {
+                      settoggle(false);
+                    }
+                  }}
+                />
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }

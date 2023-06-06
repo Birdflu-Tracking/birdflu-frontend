@@ -11,9 +11,54 @@ import "react-toastify/dist/ReactToastify.css";
 import HealthSidebar from "@/features/ui/HealthSidebar/HealthSidebar";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 import axios from "axios";
-import { CurrentRequests, User } from "@/types";
+import { CurrentRequests, FarmReports, User } from "@/types";
 import { firebaseDateToDate } from "@/utils";
 import { ToastContainer, toast } from "react-toastify";
+
+const MarkBtn = ({
+  reportId,
+  farmData,
+  type,
+  getCurrentRequests,
+}: {
+  reportId: string;
+  farmData: User;
+  type: string;
+  getCurrentRequests: Function;
+}) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleMarkInfected = async (reportId: string, farmData: User) => {
+    setLoading(true);
+    axios
+      .post(
+        `http://localhost:8080/api/health-worker/mark/${type}`,
+        { requestId: reportId },
+        { withCredentials: true }
+      )
+      .then(() => {
+        toast(`Marked farm ${farmData.outletName} as infected`);
+        setLoading(false);
+        getCurrentRequests();
+      })
+      .catch((err) => {
+        if (err.response.status == 400) {
+          toast(`Cannot mark infected, prediction is not available`);
+        }
+        console.log(err);
+        setLoading(false);
+      });
+  };
+
+  return (
+    <Button
+      value={loading ? `Marking ${type}...` : `Mark ${type}`}
+      onClick={() => handleMarkInfected(reportId, farmData)}
+      disabled={loading}
+    />
+  );
+};
+
 const Dashboard = () => {
   let links = [
     {
@@ -47,42 +92,6 @@ const Dashboard = () => {
       })
       .catch((err) => {});
   }, []);
-
-  const handleMarkInfected = async (reportId: string, farmData: User) => {
-    axios
-      .post(
-        "http://localhost:8080/api/health-worker/mark/infected",
-        { requestId: reportId },
-        { withCredentials: true }
-      )
-      .then(() => {
-        toast(`Marked farm ${farmData.outletName} as infected`);
-      })
-      .catch((err) => {
-        if (err.response.status == 400) {
-          toast(`Cannot mark infected, prediction is not available`);
-        }
-        console.log(err);
-      });
-  };
-
-  const handleMarkUnInfected = async (reportId: string, farmData: User) => {
-    axios
-      .post(
-        "http://localhost:8080/api/health-worker/mark/uninfected",
-        { requestId: reportId },
-        { withCredentials: true }
-      )
-      .then(() => {
-        toast(`Marked farm ${farmData.outletName} as uninfected`);
-      })
-      .catch((err) => {
-        if (err.response.status == 400) {
-          toast(`Cannot mark uninfected, prediction is not available`);
-        }
-        console.log(err);
-      });
-  };
 
   useEffect(() => {
     getCurrentRequests();
@@ -144,26 +153,28 @@ const Dashboard = () => {
                               : request.reportData.predictionResult}
                           </td>
                           <td className="py-2">
-                            <Button
-                              value="Mark Affected"
-                              onClick={() =>
-                                handleMarkInfected(
-                                  request.reportId,
-                                  request.farmData
-                                )
-                              }
-                            />
+                            {!request.farmData.infected ? (
+                              <MarkBtn
+                                reportId={request.reportId}
+                                getCurrentRequests={getCurrentRequests}
+                                farmData={request.farmData}
+                                type="infected"
+                              />
+                            ) : (
+                              ""
+                            )}
                           </td>
                           <td className="py-2">
-                            <Button
-                              value="Mark UnAffected"
-                              onClick={() =>
-                                handleMarkUnInfected(
-                                  request.reportId,
-                                  request.farmData
-                                )
-                              }
-                            />
+                            {request.farmData.infected ? (
+                              <MarkBtn
+                                reportId={request.reportId}
+                                farmData={request.farmData}
+                                getCurrentRequests={getCurrentRequests}
+                                type="uninfected"
+                              />
+                            ) : (
+                              ""
+                            )}
                           </td>
                         </tr>
                       );
@@ -200,26 +211,28 @@ const Dashboard = () => {
                               : request.reportData.predictionResult}
                           </td>
                           <td className="py-2">
-                            <Button
-                              value="Mark Affected"
-                              onClick={() =>
-                                handleMarkInfected(
-                                  request.reportId,
-                                  request.farmData
-                                )
-                              }
-                            />
+                            {!request.farmData.infected ? (
+                              <MarkBtn
+                                reportId={request.reportId}
+                                getCurrentRequests={getCurrentRequests}
+                                farmData={request.farmData}
+                                type="infected"
+                              />
+                            ) : (
+                              ""
+                            )}
                           </td>
                           <td className="py-2">
-                            <Button
-                              value="Mark unaffected"
-                              onClick={() =>
-                                handleMarkUnInfected(
-                                  request.reportId,
-                                  request.farmData
-                                )
-                              }
-                            />
+                            {request.farmData.infected ? (
+                              <MarkBtn
+                                reportId={request.reportId}
+                                getCurrentRequests={getCurrentRequests}
+                                farmData={request.farmData}
+                                type="uninfected"
+                              />
+                            ) : (
+                              ""
+                            )}
                           </td>
                         </tr>
                       );
