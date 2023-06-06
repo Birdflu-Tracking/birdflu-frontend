@@ -65,6 +65,7 @@ export type SellerReports = {
     poultryShopName: string;
     reporterName: string;
     symptomStartDate: Timestamp;
+    doctorLetterUrl: string;
   };
 };
 
