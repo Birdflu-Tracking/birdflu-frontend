@@ -19,12 +19,16 @@ import { ToastContainer, toast } from "react-toastify";
 import Loading from "@/ui/LoadingScreen/Loading";
 import { SellerReports, User } from "@/types";
 import { firebaseDateToDate } from "@/utils";
+import mapboxgl from "mapbox-gl";
 
 const Dashboard = () => {
+  const [mapBox, setMapBox] = useState<any | undefined>(undefined);
+
   const [toggle, settoggle] = useState(false);
   const { sellerId } = useRouter().query;
-  const [sellerReports, setSellerReports] =
-    useState<Array<SellerReports> | null>(null);
+  const [sellerReports, setSellerReports] = useState<
+    Array<SellerReports> | undefined
+  >(undefined);
   const [sellerData, setSellerData] = useState<User | null>(null);
   const [rootFarms, setRootFarms] = useState<Array<{
     farmId: string;
@@ -81,7 +85,20 @@ const Dashboard = () => {
       console.log(err);
     }
   };
-
+  useEffect(() => {
+    if (mapBox && sellerReports) {
+      for (const report of sellerReports) {
+        console.log(report);
+        const marker = new mapboxgl.Marker({color:"#993E3A"})
+          .setLngLat(report.reportData.cords)
+          .addTo(mapBox);
+      }
+      //creates a marker to display saafwater selected device location
+      // const marker1 = new mapboxgl.Marker({ color: "blue" })
+      //   .setLngLat([data.long, data.lat])
+      //   .addTo(map.current);
+    }
+  }, [mapBox, sellerReports]);
   useEffect(() => {
     axios
       .get(
@@ -91,6 +108,7 @@ const Dashboard = () => {
       .then((res) => {
         setSellerData(res.data.message.sellerData);
         setRootFarms(res.data.message.rootFarms);
+        console.log(res.data.message.sellerReports);
         setSellerReports(res.data.message.sellerReports);
         setLoading(false);
       })
@@ -114,7 +132,7 @@ const Dashboard = () => {
           <div className="flex h-[500px] gap-5">
             <div className="flex-1">
               <div className="h-full w-full overflow-hidden rounded-xl">
-                <Map />
+                <Map setMapBox={(map) => setMapBox(map)} />
               </div>
             </div>
             <div className="flex-1 flex-col space-y-6">
@@ -225,7 +243,7 @@ const Dashboard = () => {
                           <td className="py-2">
                             {sellerReport.reportData.reporterName}
                           </td>
-                          <td>{sellerReport.reportData.poultryShopName}</td>
+                          <td>{sellerReport.reportData.address}</td>
                           <td>{sellerReport.reportData.phoneNumber}</td>
                           <td>
                             {firebaseDateToDate(

@@ -56,7 +56,7 @@ const Dashboard = () => {
   );
   const [cookies] = useCookies(["user"]);
   const [currentUser, setCurrentUser] = useState<User | undefined>(undefined);
-
+  const [batchesWithCount, setBatchesWithCount] = useState<any>(undefined);
   // const [tm, setTm] = useState<NodeJS.Timeout>();
   // const [pingInterval, setPingInterval] = useState<NodeJS.Timer>();
 
@@ -125,9 +125,18 @@ const Dashboard = () => {
       .then((res) => {
         console.log(res.data);
         setBatchSalesData(res.data);
+        // let t = res.data.soldBatches.reduce((result, d) => {
+        //   console.log(firebaseDateToDate(d.createdAt),d.batchSize)
+        //   if (result[firebaseDateToDate(d.createdAt)]!=undefined) {
+        //     result[firebaseDateToDate(d.createdAt)] =
+        //       result[firebaseDateToDate(d.createdAt)] + d.batchSize || 0;
+        //   } 
+        //   return result;
+        // }, {result1});
+        // console.log(t);
         setLoading(false);
         setCurrentUser(cookies["user"]);
-        console.log(cookies["user"])
+        console.log(cookies["user"]);
       })
       .catch((err) => {
         console.log(err);

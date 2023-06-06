@@ -46,9 +46,10 @@ export default function Reporting() {
     if (mapBox) {
       mapBox.on("click", (event) => {
         let cordinates = event.lngLat;
+        console.log(cordinates)
         setData((prev) => ({
           ...prev,
-          cords:cordinates
+          cords:[cordinates.lng,cordinates.lat]
         }));
         if (marker) {
           marker.remove();
