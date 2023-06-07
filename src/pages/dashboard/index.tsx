@@ -126,6 +126,7 @@ const Dashboard = () => {
         console.log(res.data);
         setBatchSalesData(res.data);
         let t = res.data.soldBatches.reduce((result, d) => {
+          console.log(d)
           console.log(firebaseDateToDate(d.createdAt), d.batchSize);
           result[firebaseDateToDate(d.createdAt)] =
             result[firebaseDateToDate(d.createdAt)] != undefined
@@ -221,8 +222,11 @@ const Dashboard = () => {
   useEffect(() => {
     startConn();
     getBatches();
-    getCurrentReportRequests();
-  }, [startConn, getBatches, getCurrentReportRequests]);
+    console.log(cookies)
+    if (cookies.user.type == "farmer") {
+      getCurrentReportRequests();
+    }
+  }, [startConn, getBatches, getCurrentReportRequests,cookies]);
 
   return loading ? (
     <Loading />
@@ -251,7 +255,7 @@ const Dashboard = () => {
                 Chickens <br /> Sold this Month
               </h1>
               <div className="w-full flex-[2] z-50">
-                {batchesWithCount!=undefined  ? (
+                {batchesWithCount != undefined ? (
                   <BarChart data={batchesWithCount} />
                 ) : (
                   "No Sales Data"
