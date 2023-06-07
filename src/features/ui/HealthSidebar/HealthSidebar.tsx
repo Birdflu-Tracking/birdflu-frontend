@@ -42,7 +42,7 @@ const HealthSidebar = () => {
           />
         </Link>
       </div>
-      {currentRequests?.submitted && currentRequests?.submitted[0].reportData.avianResult?<div className="bg-secondary p-5 rounded-xl  text-primary items-center space-y-2">
+      {currentRequests?.submitted.length > 0 && currentRequests?.submitted[0].reportData.avianResult?<div className="bg-secondary p-5 rounded-xl  text-primary items-center space-y-2">
         {" "}
         <h2 className="font-semibold">Submitted report ML predictions</h2>
         <div className="flex space-x-2 text-red-600">

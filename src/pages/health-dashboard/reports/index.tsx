@@ -87,7 +87,7 @@ const Dashboard = () => {
                   reportedSellers.map((reportedSeller) => (
                     <tr className="border-b   " key={reportedSeller.sellerId}>
                       <td className="py-2">{reportedSeller.sellerName}</td>
-                      <td>10</td>
+                      <td>1</td>
                       <td>
                         {" "}
                         <Link
