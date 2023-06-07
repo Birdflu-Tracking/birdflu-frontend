@@ -66,7 +66,7 @@ const HomePage = () => {
       <Navbar />
       <div className="h-screen w-full relative">
         <div className="h-full w-full absolute flex justify-center">
-          <div className="absolute top-16 m-auto h-fit w-1/3 bg-white z-10  rounded-xl shadow-md p-5 space-y-4">
+          {/* <div className="absolute top-16 m-auto h-fit w-1/3 bg-white z-10  rounded-xl shadow-md p-5 space-y-4">
             <div className="space-y-2">
               <div className="w-full bg-secondary rounded-md p-2 flex items-center gap-2">
                 <Icon
@@ -92,14 +92,13 @@ const HomePage = () => {
                 </h5>
               </div>
             </div>
-            {/* list */}
             <div className="space-y-1">
               <h1 className="font-medium text-base ">Manoj Chicken Shop</h1>
               <p className=" text-sm text-gray-500">
                 Near blue dart office, khorlim,mapusa goa
               </p>
             </div>
-          </div>
+          </div> */}
           <div className="absolute top-16 left-10 z-10 w-fit bg-white/50 rounded-2xl backdrop-blur-md shadow-lg p-5 space-y-2 min-w-[250px] h-fit">
             <h1 className="font-medium text-2xl text-gray-600">Index</h1>
 

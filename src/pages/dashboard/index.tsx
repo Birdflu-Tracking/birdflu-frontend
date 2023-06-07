@@ -125,18 +125,21 @@ const Dashboard = () => {
       .then((res) => {
         console.log(res.data);
         setBatchSalesData(res.data);
-        // let t = res.data.soldBatches.reduce((result, d) => {
-        //   console.log(firebaseDateToDate(d.createdAt),d.batchSize)
-        //   if (result[firebaseDateToDate(d.createdAt)]!=undefined) {
-        //     result[firebaseDateToDate(d.createdAt)] =
-        //       result[firebaseDateToDate(d.createdAt)] + d.batchSize || 0;
-        //   } 
-        //   return result;
-        // }, {result1});
-        // console.log(t);
+        let t = res.data.soldBatches.reduce((result, d) => {
+          console.log(firebaseDateToDate(d.createdAt), d.batchSize);
+          result[firebaseDateToDate(d.createdAt)] =
+            result[firebaseDateToDate(d.createdAt)] != undefined
+              ? result[firebaseDateToDate(d.createdAt)] + d.batchSize
+              : 0 + d.batchSize;
+
+          return result;
+        }, {});
+        setBatchesWithCount(
+          Object.keys(t).map((key) => ({ date: key, value: t[key] }))
+        );
         setLoading(false);
         setCurrentUser(cookies["user"]);
-        console.log(cookies["user"]);
+        // console.log(cookies["user"]);
       })
       .catch((err) => {
         console.log(err);
@@ -247,8 +250,12 @@ const Dashboard = () => {
                 </span>{" "}
                 Chickens <br /> Sold this Month
               </h1>
-              <div className="w-full flex-[2]">
-                <BarChart />
+              <div className="w-full flex-[2] z-50">
+                {batchesWithCount!=undefined  ? (
+                  <BarChart data={batchesWithCount} />
+                ) : (
+                  "No Sales Data"
+                )}
               </div>
             </div>
             <div className=" space-y-4 flex-[1] self-end flex flex-col">
@@ -363,7 +370,7 @@ const Dashboard = () => {
                 Possible flue spread from your farm please test chickens and
                 submit report
               </p>
-              <Link href={"/sample-requests"}>
+              <Link href={"/dashboard/sample-requests"}>
                 {" "}
                 <Button
                   // onClick={() => settoggle(true)}

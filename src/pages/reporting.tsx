@@ -33,7 +33,8 @@ export type ReportingDataType = {
 export default function Reporting() {
   const [toggle, settoggle] = useState(false);
   const addRef = useRef(null);
-
+  const [popupError,setPopupError]=useState("")
+  const [error,setError]=useState("")
   const [loading, setLoading] = useState(false);
   const [sellers, setSellerShops] = useState([]);
   const [mapBox, setMapBox] = useState<any | undefined>(undefined);
@@ -58,7 +59,7 @@ export default function Reporting() {
         console.log(cordinates)
         setData((prev) => ({
           ...prev,
-          cords:[cordinates.lng,cordinates.lat]
+          cords:cordinates
         }));
         if (marker) {
           marker.remove();
@@ -70,7 +71,7 @@ export default function Reporting() {
   async function handleSubmit(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
-    e.preventDefault();
+    // e.preventDefault();
     console.log(
       data.fullName,
       data.address,
@@ -153,9 +154,9 @@ export default function Reporting() {
       <Navbar />
       <div className="relative container mx-auto py-16 px-16">
         <h1 className="text-3xl font-bold">Reporting Form</h1>
-        <form className="flex">
+        <div className="flex">
           {/* Reporters user data */}
-          <div>
+          <form>
             {[
               {
                 dataName: "fullName",
@@ -247,11 +248,12 @@ export default function Reporting() {
               sell your use your data without your permissions.
             </p>
             <Button
+            type="submit"
               value={loading ? "Submitting..." : "Submit"}
               onClick={(e) => handleSubmit(e)}
               disabled={loading == true}
             />
-          </div>
+          </form>
 
           {/* Attachments */}
           <div className="px-20 py-8 text-center w-max">
@@ -290,15 +292,15 @@ export default function Reporting() {
               )}
             </div>
           </div>
-        </form>
+        </div>
       </div>
-      {toggle && (
-        <div className="fixed top-0 h-screen w-screen bg-gray-400/30 flex items-center justify-center">
+        <div className={`fixed top-0 h-screen w-screen bg-gray-400/30 flex items-center justify-center ${toggle?"visible":"invisible"}`}>
           <div className="relative h-1/2 w-1/2 rounded-lg shadow-lg bg-white p-6 flex flex-col">
             <div className="flex justify-between pb-4">
               <p className="font-semibold">Select your location</p>{" "}
               <button onClick={() => settoggle(false)}>X</button>
             </div>
+            <p className="text-red-600 font-bold mb-2">{popupError}</p>
             <div className="flex-1 flex gap-5">
               <div className="flex-1  overflow-hidden rounded-xl">
                 {" "}
@@ -329,6 +331,10 @@ export default function Reporting() {
                   onClick={() => {
                     if (data.cords && data.address) {
                       settoggle(false);
+                      setPopupError("")
+
+                    }else{
+                      setPopupError("Pin a location and add address")
                     }
                   }}
                 />
@@ -336,7 +342,7 @@ export default function Reporting() {
             </div>
           </div>
         </div>
-      )}
+      
     </div>
   );
 }

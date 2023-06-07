@@ -3,13 +3,12 @@ import Link from "next/link";
 import Logo from "@assets/logo/logo.svg";
 import { Icon } from "@iconify/react";
 import Button from "@/ui/Button/Button";
-import ChickenIcon from "@assets/Images/chicken-icon.svg";
-import PieChart from "@/features/ui/PieChart/PieChart";
 import Sidebar from "@/features/ui/Sidebar/Sidebar";
 import { use, useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { Batch } from "@/types";
 import { firebaseDateToDate, firebaseDateToTime } from "@/utils";
+import InventorySidebar from "@/features/ui/InventorySidebar/InventorySidebar";
 const Inventory = () => {
   const [batches, setBatches] = useState<Array<Batch> | null>(null);
   const [loading, setLoading] = useState(false);
@@ -89,38 +88,7 @@ const Inventory = () => {
             </table>
           </div>
         </div>
-        <div className="bg-white h-full rounded-xl w-[25%] p-5 space-y-4">
-          <h1 className="text-primary text-xl font-bold">Market Summary</h1>
-          <div className="bg-secondary rounded-xl p-4 flex justify-between">
-            <div className="">
-              <h5 className="text-textSecondary/75 font-semibold">
-                Total Chickens
-              </h5>
-              <h5 className="text-4xl text-primary font-bold">100</h5>
-            </div>
-            <div className="self-end">
-              <Image src={ChickenIcon} alt="test" />
-            </div>
-          </div>{" "}
-          <div className="bg-secondary rounded-xl p-4 flex justify-between">
-            <div className="">
-              <h5 className="text-textSecondary/75 font-semibold">
-                Total Batches
-              </h5>
-              <h5 className="text-4xl text-primary font-bold">67</h5>
-            </div>
-            <Icon
-              icon="material-symbols:supervised-user-circle"
-              height={50}
-              className="text-textSecondary/50 self-end"
-            />
-          </div>
-          <div className="">
-            <div className="w-full h-60">
-              <PieChart />
-            </div>
-          </div>
-        </div>
+      <InventorySidebar/>
       </div>
     </div>
   );

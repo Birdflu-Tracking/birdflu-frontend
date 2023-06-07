@@ -52,6 +52,7 @@ export type FarmReports = {
   submittedAt: Timestamp;
   submitted: boolean;
   predictionResult: string;
+  avianResult:boolean,
   chickenSymptoms: Array<object>;
 };
 

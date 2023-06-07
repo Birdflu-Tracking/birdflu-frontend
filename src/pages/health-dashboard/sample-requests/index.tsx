@@ -143,9 +143,9 @@ const Dashboard = () => {
                               : "Not Submitted"}
                           </td>
                           <td className="py-2">
-                            {request.farmData.infected
-                              ? "Affected"
-                              : "Not Affected"}
+                            {request.reportData.avianResult
+                              ? "Positive"
+                              : "Negative"}
                           </td>
                           <td className="py-2">
                             {request.reportData.predictionResult == null
@@ -203,7 +203,7 @@ const Dashboard = () => {
                           <td className="py-2">
                             {request.farmData.infected
                               ? "Affected"
-                              : "Not Affected"}
+                              : "Not Available"}
                           </td>
                           <td className="py-2">
                             {request.reportData.predictionResult == null
@@ -242,38 +242,7 @@ const Dashboard = () => {
             </table>
           </div>
         </div>
-        <div className="bg-white h-full rounded-xl w-[25%] p-5 space-y-4">
-          <div className="flex flex-col justify-center items-center p-5 bg-secondary rounded-xl text-primary space-y-4">
-            <h3 className=" font-semibold">Chicken Flue Alerts</h3>
-            <Icon icon="solar:danger-triangle-linear" height={80} />
-            <p className=" text-xs text-center font-medium">
-              Increasing reports at mahesh poultry farm
-            </p>
-            <Button
-              onClick={() => settoggle(true)}
-              value="Take Action"
-              text="text-xs"
-            />
-          </div>
-          <div className="bg-secondary p-5 rounded-xl  text-primary items-center space-y-2">
-            {" "}
-            <h2 className="font-semibold">Submitted report ML predictions</h2>
-            <div className="flex space-x-2 text-red-600">
-              <Icon
-                icon="solar:danger-triangle-linear"
-                height={80}
-                className="text-red-600"
-              />
-              <div className="space-y-2">
-                <p className="text-2xl font-bold">Mahesh Farm</p>
-                <p>ML results Positive for Avian Influenza</p>
-                <button className="bg-red-600 p-2 rounded-full w-full text-white">
-                  Mark as Affected
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+        <HealthSidebar/>
       </div>
       <ToastContainer toastStyle={{ backgroundColor: "#FFFFFF" }} />
     </div>
