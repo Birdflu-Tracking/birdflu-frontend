@@ -126,7 +126,6 @@ const Dashboard = () => {
         console.log(res.data);
         setBatchSalesData(res.data);
         let t = res.data.soldBatches.reduce((result, d) => {
-          console.log(d)
           console.log(firebaseDateToDate(d.createdAt), d.batchSize);
           result[firebaseDateToDate(d.createdAt)] =
             result[firebaseDateToDate(d.createdAt)] != undefined
@@ -222,11 +221,11 @@ const Dashboard = () => {
   useEffect(() => {
     startConn();
     getBatches();
-    console.log(cookies)
+    console.log(cookies);
     if (cookies.user.type == "farmer") {
       getCurrentReportRequests();
     }
-  }, [startConn, getBatches, getCurrentReportRequests,cookies]);
+  }, [startConn, getBatches, getCurrentReportRequests, cookies]);
 
   return loading ? (
     <Loading />
@@ -365,23 +364,27 @@ const Dashboard = () => {
             </table>
           </div>
         </div>
-        <div className="bg-white h-full rounded-xl w-[25%] p-5 space-y-4">
-          {currentReports.length > 0 ? (
+        <div className="bg-white h-full rounded-xl w-[25%] p-5 space-y-4">{console.log(cookies.user)}
+          {currentReports.length > 0 ||
+          (cookies.user.type === "distributor" && cookies.user.infected) ? (
             <div className="flex flex-col justify-center items-center p-5 bg-secondary rounded-xl text-primary space-y-4">
               <h3 className=" font-semibold">Chicken Flue Alerts</h3>
               <Icon icon="solar:danger-triangle-linear" height={80} />
               <p className=" text-xs text-center font-medium">
-                Possible flue spread from your farm please test chickens and
-                submit report
+                {cookies.user.type === "distributor"
+                  ? "You have been marked affected please stop your sales"
+                  : "Possible flue spread from your farm please test chickens and submit report"}
               </p>
-              <Link href={"/dashboard/sample-requests"}>
-                {" "}
-                <Button
-                  // onClick={() => settoggle(true)}
-                  value="Submit report"
-                  text="text-xs"
-                />
-              </Link>
+              {cookies.user.type === "farmer" ? (
+                <Link href={"/dashboard/sample-requests"}>
+                  {" "}
+                  <Button
+                    // onClick={() => settoggle(true)}
+                    value="Submit report"
+                    text="text-xs"
+                  />
+                </Link>
+              ) : null}
             </div>
           ) : null}
           <div className="bg-secondary p-5 rounded-xl flex space-x-2 text-primary items-center ">
@@ -398,30 +401,32 @@ const Dashboard = () => {
                 : "Disconnected"}
             </h2>
           </div>
-          <div className="bg-secondary p-5 rounded-xl space-y-4 flex flex-col items-center">
-            <h2 className="text-primary font-semibold">Create Batch</h2>
-            <div className="w-full flex p-2 bg-white rounded-full justify-between items-center space-x-2 text-primary">
-              <button onClick={() => setBatchSize((prev) => prev - 1)}>
-                <Icon icon="mdi:minus-circle-outline" height={20} />
-              </button>
-              <input
-                type="number"
-                placeholder="No. of Chickens"
-                className="w-[50px] hover:outline-none focus:outline-none "
-                value={batchSize}
-                onChange={(e) => setBatchSize(Number(e.target.value))}
+          {cookies.user.type === "farmer" ? (
+            <div className="bg-secondary p-5 rounded-xl space-y-4 flex flex-col items-center">
+              <h2 className="text-primary font-semibold">Create Batch</h2>
+              <div className="w-full flex p-2 bg-white rounded-full justify-between items-center space-x-2 text-primary">
+                <button onClick={() => setBatchSize((prev) => prev - 1)}>
+                  <Icon icon="mdi:minus-circle-outline" height={20} />
+                </button>
+                <input
+                  type="number"
+                  placeholder="No. of Chickens"
+                  className="w-[50px] hover:outline-none focus:outline-none "
+                  value={batchSize}
+                  onChange={(e) => setBatchSize(Number(e.target.value))}
+                />
+                <button onClick={() => setBatchSize((prev) => prev + 1)}>
+                  <Icon icon="mdi:plus-circle-outline" height={20} />
+                </button>
+              </div>
+              <Button
+                value={batchCreationLoading ? "Creating" : "Create Batch"}
+                text="text-md"
+                fullWidth
+                onClick={() => handleBatchCreation()}
               />
-              <button onClick={() => setBatchSize((prev) => prev + 1)}>
-                <Icon icon="mdi:plus-circle-outline" height={20} />
-              </button>
             </div>
-            <Button
-              value={batchCreationLoading ? "Creating" : "Create Batch"}
-              text="text-md"
-              fullWidth
-              onClick={() => handleBatchCreation()}
-            />
-          </div>
+          ) : null}
         </div>
       </div>
       {transferModalToggle && (
