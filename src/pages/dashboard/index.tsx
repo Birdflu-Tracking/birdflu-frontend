@@ -364,7 +364,7 @@ const Dashboard = () => {
             </table>
           </div>
         </div>
-        <div className="bg-white h-full rounded-xl w-[25%] p-5 space-y-4">{console.log(cookies.user)}
+        <div className="bg-white h-full rounded-xl w-[25%] p-5 space-y-4">
           {currentReports.length > 0 ||
           (cookies.user.type === "distributor" && cookies.user.infected) ? (
             <div className="flex flex-col justify-center items-center p-5 bg-secondary rounded-xl text-primary space-y-4">
