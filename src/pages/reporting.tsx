@@ -38,7 +38,7 @@ export default function Reporting() {
   const [loading, setLoading] = useState(false);
   const [sellers, setSellerShops] = useState([]);
   const [mapBox, setMapBox] = useState<any | undefined>(undefined);
-  const [letter, setLetter] = useState(null);
+  const [letter, setLetter] = useState(undefined);
   const [selectedSeller, setSelectedSeller] = useState<{
     key: string;
     label: string;
@@ -71,6 +71,18 @@ export default function Reporting() {
   async function handleSubmit(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
+  let validated=false;
+  let ph = /^[7-9][0-9]{9}$/;
+  //@ts-ignore
+  if(data.contact&&!ph.test(data.contact)){
+    setError("Invalid Phone number")
+  }
+if(!letter){
+  setError("Add your doctors letter")
+}
+if(ph.test(data.contact)){
+  validated=true
+}
     // e.preventDefault();
     console.log(
       data.fullName,
@@ -86,7 +98,7 @@ export default function Reporting() {
       data.contact &&
       data.poultryShop &&
       data.symtompsStartDate &&
-      data.cords
+      data.cords&&letter&& validated
     ) {
       console.log("sending");
       setLoading(true);
@@ -139,6 +151,12 @@ export default function Reporting() {
       // setPdfPreviewUrl(URL.createObjectURL(event.target.files[0]));
     }
   };
+  useEffect(()=>{
+    setTimeout(()=>{
+      setError("")
+    setPopupError("")
+    },5000)
+  },[error,popupError])
 
   useEffect(() => {
     getSellerShops();
@@ -154,9 +172,11 @@ export default function Reporting() {
       <Navbar />
       <div className="relative container mx-auto py-16 px-16">
         <h1 className="text-3xl font-bold">Reporting Form</h1>
+        <p className="text-red-600 font-bold mb-2">{error}</p>
+
         <div className="flex">
           {/* Reporters user data */}
-          <form>
+          <form onSubmit={(e)=>e.preventDefault()}>
             {[
               {
                 dataName: "fullName",
@@ -250,7 +270,7 @@ export default function Reporting() {
             <Button
             type="submit"
               value={loading ? "Submitting..." : "Submit"}
-              onClick={(e) => handleSubmit(e)}
+              onClick={(e) =>{ e.preventDefault(); handleSubmit(e)}}
               disabled={loading == true}
             />
           </form>
@@ -309,7 +329,7 @@ export default function Reporting() {
               <div className="flex-1 gap-10 flex flex-col items-end w-full">
                 <div className=" flex flex-col gap-2 w-full ">
                   <label htmlFor="" className="text-lg font-medium">
-                    Outlet Address
+                    Address
                   </label>
                   <textarea
                     onChange={(e) => {

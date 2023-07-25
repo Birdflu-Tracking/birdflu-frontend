@@ -3,7 +3,7 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 const firebaseConfig = {
-  apiKey: "AIzaSyCvVK5yUKogNjsBxLc4BjMohyszX36ixc4",
+  apiKey: process.env.FIREBASE_API_KEY,
   authDomain: "birdflu-tracker.firebaseapp.com",
   projectId: "birdflu-tracker",
   storageBucket: "gs://birdflu-tracker.appspot.com",
