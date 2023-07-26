@@ -17,10 +17,10 @@ const HomePage = () => {
       (async () => {
         try {
           let response = await axios.get(
-            `http://localhost:8080/open/infected-stakeholders`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/open/infected-stakeholders`
           );
           let res2 = await axios.get(
-            `http://localhost:8080/open/active-cases`
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/open/active-cases`
           );
           // Create a new marker.
           setLiveData((prev) => ({

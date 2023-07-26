@@ -14,7 +14,7 @@ import {
 
 
 
-export default function BarChart({data}) {
+export default function BarChart({data}:any) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BC width={150} height={40} data={data}>

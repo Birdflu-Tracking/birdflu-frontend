@@ -72,7 +72,7 @@ const Dashboard = () => {
     setSendRequestLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/health-worker/send/symptom/request",
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/health-worker/send/symptom/request`,
         { farmId },
         {
           withCredentials: true,
@@ -102,7 +102,7 @@ const Dashboard = () => {
   useEffect(() => {
     axios
       .get(
-        `http://localhost:8080/api/health-worker/reports/seller/${sellerId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/health-worker/reports/seller/${sellerId}`,
         { withCredentials: true }
       )
       .then((res) => {

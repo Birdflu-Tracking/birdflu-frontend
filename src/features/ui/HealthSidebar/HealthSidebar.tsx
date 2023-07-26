@@ -14,7 +14,7 @@ const HealthSidebar = () => {
 
   const getCurrentRequests = useCallback(async () => {
     axios
-      .get("http://localhost:8080/api/health-worker/current/requests", {
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/health-worker/current/requests`, {
         withCredentials: true,
       })
       .then(({ data }) => {
@@ -42,25 +42,32 @@ const HealthSidebar = () => {
           />
         </Link>
       </div>
-      {currentRequests?.submitted.length > 0 && currentRequests?.submitted[0].reportData.avianResult?<div className="bg-secondary p-5 rounded-xl  text-primary items-center space-y-2">
-        {" "}
-        <h2 className="font-semibold">Submitted report ML predictions</h2>
-        <div className="flex space-x-2 text-red-600">
-          <Icon
-            icon="solar:danger-triangle-linear"
-            height={80}
-            className="text-red-600"
-          />
-          <div className="space-y-2">
-            <p className="text-2xl font-bold">{currentRequests.submitted[0].farmData.outletName}</p>
-            <p>ML results Positive for Avian Influenza</p>
-            <Link href={"/health-worker/sample-requests"}><button className="bg-red-600 p-2 rounded-full w-full text-white">
-              Mark as Affected
-            </button>
-            </Link>
+      {currentRequests &&
+      currentRequests?.submitted.length > 0 &&
+      currentRequests?.submitted[0].reportData.avianResult ? (
+        <div className="bg-secondary p-5 rounded-xl  text-primary items-center space-y-2">
+          {" "}
+          <h2 className="font-semibold">Submitted report ML predictions</h2>
+          <div className="flex space-x-2 text-red-600">
+            <Icon
+              icon="solar:danger-triangle-linear"
+              height={80}
+              className="text-red-600"
+            />
+            <div className="space-y-2">
+              <p className="text-2xl font-bold">
+                {currentRequests.submitted[0].farmData.outletName}
+              </p>
+              <p>ML results Positive for Avian Influenza</p>
+              <Link href={"/health-worker/sample-requests"}>
+                <button className="bg-red-600 p-2 rounded-full w-full text-white">
+                  Mark as Affected
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
-      </div>:null}
+      ) : null}
     </div>
   );
 };

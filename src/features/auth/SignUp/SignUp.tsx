@@ -31,9 +31,9 @@ const SignUp = () => {
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
-    let marker = undefined;
+    let marker: any = undefined;
     if (mapBox) {
-      mapBox.on("click", (event) => {
+      mapBox.on("click", (event: any) => {
         let cordinates = event.lngLat;
         setData((prev) => ({
           ...prev,
@@ -82,7 +82,7 @@ const SignUp = () => {
     ) {
       setLoading(true);
       axios
-        .post(`http://localhost:8080/api/auth/create/${data.user_type}`, {
+        .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/create/${data.user_type}`, {
           fullName: data.full_name,
           email: data.email,
           password: data.password,
@@ -306,6 +306,7 @@ const SignUp = () => {
                       data.longitude &&
                       data.outlet_address
                     ) {
+                      //@ts-ignore
                       addRef.current.value = data.outlet_address;
                       settoggle(false);
                     }

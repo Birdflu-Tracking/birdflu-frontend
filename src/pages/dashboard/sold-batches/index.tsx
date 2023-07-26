@@ -44,7 +44,7 @@ const SoldBatches = () => {
 
   const getBatches = useCallback(async () => {
     await axios
-      .get("http://localhost:8080/api/user/sold-batches", {
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/sold-batches`, {
         withCredentials: true,
       })
       .then((res) => {

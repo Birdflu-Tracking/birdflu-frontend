@@ -40,8 +40,8 @@ const SignIn = () => {
           .post(
             `${
               userType == "health-worker"
-                ? "http://localhost:8080/api/auth/login/health-worker"
-                : "http://localhost:8080/api/auth/login"
+                ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login/health-worker`
+                : `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/login`
             }`,
             { idToken },
             { withCredentials: true }
@@ -133,7 +133,6 @@ const SignIn = () => {
             </div>
             <Button
               value={loading ? "Signing in..." : "Sign In"}
-              rounded="rounded-md"
               disabled={loading == true}
               onClick={() => handleSignin()}
             />

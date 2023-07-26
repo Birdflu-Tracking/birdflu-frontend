@@ -52,7 +52,7 @@ export type FarmReports = {
   submittedAt: Timestamp;
   submitted: boolean;
   predictionResult: string;
-  avianResult:boolean,
+  avianResult: boolean;
   chickenSymptoms: Array<object>;
 };
 
@@ -67,6 +67,7 @@ export type SellerReports = {
     reporterName: string;
     symptomStartDate: Timestamp;
     doctorLetterUrl: string;
+    cords: [number, number];
   };
 };
 

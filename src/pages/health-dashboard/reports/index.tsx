@@ -50,7 +50,7 @@ const Dashboard = () => {
 
   const getReportedSellers = async () => {
     await axios
-      .get("http://localhost:8080/api/health-worker/reported-sellers/", {
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/health-worker/reported-sellers/`, {
         withCredentials: true,
       })
       .then((res) => {

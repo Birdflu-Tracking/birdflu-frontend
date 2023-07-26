@@ -6,7 +6,7 @@ const Navbar = () => {
   return (
     <div className="h-fit w-full bg-secondary flex justify-between items-center p-5 py-6">
         <div className="h-full w-36">
-          <Image src={Logo} />
+          <Image src={Logo} alt="Logo"/>
         </div>
       <div className="relative w-1/4 h-12 bg-primary/20 rounded-full flex justify-evenly items-center text-[#626262]">
         <div className="relative ">
@@ -18,7 +18,7 @@ const Navbar = () => {
       </div>
       <div className="">
         <Link href={"/auth/signin"}>
-          <Button value="Sign In" rounded="rounded-xl" onClick={() => {}} />
+          <Button value="Sign In" onClick={() => {}} />
         </Link>
       </div>
     </div>

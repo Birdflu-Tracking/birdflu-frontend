@@ -32,7 +32,7 @@ const MarkBtn = ({
     setLoading(true);
     axios
       .post(
-        `http://localhost:8080/api/health-worker/mark/${type}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/health-worker/mark/${type}`,
         { requestId: reportId },
         { withCredentials: true }
       )
@@ -84,7 +84,7 @@ const Dashboard = () => {
 
   const getCurrentRequests = useCallback(async () => {
     axios
-      .get("http://localhost:8080/api/health-worker/current/requests", {
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/health-worker/current/requests`, {
         withCredentials: true,
       })
       .then(({ data }) => {

@@ -13,13 +13,13 @@ const InventorySidebar = () => {
     const[chartData,setChartData]=useState<any|undefined>(undefined)
     const getDashboardData = useCallback(() => {
         axios
-          .get("http://localhost:8080/api/user/total-batches-generated-and-sold", {
+          .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/total-batches-generated-and-sold`, {
             withCredentials: true,
           })
           .then((res) => {
             console.log(res.data);
             setData(res.data);
-            let t = res.data.soldBatches.reduce((result, d) => {
+            let t = res.data.soldBatches.reduce((result:any, d:any) => {
                 result[d.distributorId] =
                   result[d.distributorId] != undefined
                     ? ++result[d.distributorId]

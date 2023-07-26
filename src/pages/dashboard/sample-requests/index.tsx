@@ -55,7 +55,7 @@ const SampleRequests = () => {
   const getCurrentReportRequests = useCallback(async () => {
     setLoading(true);
     await axios
-      .get("http://localhost:8080/api/user/current/requests", {
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/current/requests`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -86,7 +86,7 @@ const SampleRequests = () => {
       if (sampleSymptoms.length == 4 && requestId) {
         setReportSubmitLoading(true);
         await axios.post(
-          "http://localhost:8080/api/user/farmer/report",
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/farmer/report`,
           {
             requestId: requestId,
             chickenSymptoms: sampleSymptoms,

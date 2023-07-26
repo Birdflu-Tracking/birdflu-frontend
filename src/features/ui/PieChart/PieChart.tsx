@@ -36,7 +36,7 @@ const COLORS = ["#993E3A", "#FADEBE", "#E2E2E2", "#FFD6BE"];
 //     </text>
 //   );
 // };
-const renderActiveShape = (props) => {
+const renderActiveShape = (props:any) => {
   const RADIAN = Math.PI / 180;
   const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
   const sin = Math.sin(-RADIAN * midAngle);
@@ -81,7 +81,7 @@ const renderActiveShape = (props) => {
     </g>
   );
 };
-export default function PieChart({data}) {
+export default function PieChart({data}:any) {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PC>
@@ -98,7 +98,7 @@ export default function PieChart({data}) {
 
         >
         
-          {data.map((entry, index) => (
+          {data.map((entry:any, index:number) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>

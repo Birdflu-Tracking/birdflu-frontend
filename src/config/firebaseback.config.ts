@@ -3,7 +3,7 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "birdflu-tracker.firebaseapp.com",
   projectId: "birdflu-tracker",
   storageBucket: "gs://birdflu-tracker.appspot.com",
@@ -18,4 +18,4 @@ export const firestore = getFirestore(app);
 const auth = getAuth(app);
 auth.settings.appVerificationDisabledForTesting = true;
 
-export { auth };
+export { auth, app };

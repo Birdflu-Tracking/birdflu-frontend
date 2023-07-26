@@ -1,3 +1,4 @@
+//@ts-nocheck
 import Navbar from "@/features/Homepage/Navbar/Navbar";
 import Button from "@/ui/Button/Button";
 import { FormInput } from "@/ui/FormInput/FormInput";
@@ -33,8 +34,8 @@ export type ReportingDataType = {
 export default function Reporting() {
   const [toggle, settoggle] = useState(false);
   const addRef = useRef(null);
-  const [popupError,setPopupError]=useState("")
-  const [error,setError]=useState("")
+  const [popupError, setPopupError] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [sellers, setSellerShops] = useState([]);
   const [mapBox, setMapBox] = useState<any | undefined>(undefined);
@@ -52,14 +53,14 @@ export default function Reporting() {
     symtompsStartDate: undefined,
   });
   useEffect(() => {
-    let marker = undefined;
+    let marker: any = undefined;
     if (mapBox) {
-      mapBox.on("click", (event) => {
+      mapBox.on("click", (event: any) => {
         let cordinates = event.lngLat;
-        console.log(cordinates)
+        console.log(cordinates);
         setData((prev) => ({
           ...prev,
-          cords:cordinates
+          cords: cordinates,
         }));
         if (marker) {
           marker.remove();
@@ -71,18 +72,18 @@ export default function Reporting() {
   async function handleSubmit(
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
-  let validated=false;
-  let ph = /^[7-9][0-9]{9}$/;
-  //@ts-ignore
-  if(data.contact&&!ph.test(data.contact)){
-    setError("Invalid Phone number")
-  }
-if(!letter){
-  setError("Add your doctors letter")
-}
-if(ph.test(data.contact)){
-  validated=true
-}
+    let validated = false;
+    let ph = /^[7-9][0-9]{9}$/;
+    //@ts-ignore
+    if (data.contact && !ph.test(data.contact)) {
+      setError("Invalid Phone number");
+    }
+    if (!letter) {
+      setError("Add your doctors letter");
+    }
+    if (ph.test(data.contact)) {
+      validated = true;
+    }
     // e.preventDefault();
     console.log(
       data.fullName,
@@ -98,16 +99,18 @@ if(ph.test(data.contact)){
       data.contact &&
       data.poultryShop &&
       data.symtompsStartDate &&
-      data.cords&&letter&& validated
+      data.cords &&
+      letter &&
+      validated
     ) {
       console.log("sending");
       setLoading(true);
       const storage = getStorage(app);
-      const storageRef = ref(storage, `${letter.name}`);
+      const storageRef = ref(storage, `${letter?.name}`);
       await uploadBytesResumable(storageRef, letter);
 
       axios
-        .post("http://localhost:8080/open/submit-flu-report", {
+        .post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/open/submit-flu-report`, {
           reporterName: data.fullName,
           phoneNumber: data.contact,
           poultryShopName: data.poultryShop.label,
@@ -131,7 +134,7 @@ if(ph.test(data.contact)){
 
   const getSellerShops = async () => {
     axios
-      .get("http://localhost:8080/open/seller-shops")
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/open/seller-shops`)
       .then((res) => {
         console.log(res.data.sellers);
         setSellerShops(res.data.sellers);
@@ -151,12 +154,12 @@ if(ph.test(data.contact)){
       // setPdfPreviewUrl(URL.createObjectURL(event.target.files[0]));
     }
   };
-  useEffect(()=>{
-    setTimeout(()=>{
-      setError("")
-    setPopupError("")
-    },5000)
-  },[error,popupError])
+  useEffect(() => {
+    setTimeout(() => {
+      setError("");
+      setPopupError("");
+    }, 5000);
+  }, [error, popupError]);
 
   useEffect(() => {
     getSellerShops();
@@ -176,7 +179,7 @@ if(ph.test(data.contact)){
 
         <div className="flex">
           {/* Reporters user data */}
-          <form onSubmit={(e)=>e.preventDefault()}>
+          <form onSubmit={(e) => e.preventDefault()}>
             {[
               {
                 dataName: "fullName",
@@ -268,9 +271,12 @@ if(ph.test(data.contact)){
               sell your use your data without your permissions.
             </p>
             <Button
-            type="submit"
+              type="submit"
               value={loading ? "Submitting..." : "Submit"}
-              onClick={(e) =>{ e.preventDefault(); handleSubmit(e)}}
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit(e);
+              }}
               disabled={loading == true}
             />
           </form>
@@ -314,55 +320,57 @@ if(ph.test(data.contact)){
           </div>
         </div>
       </div>
-        <div className={`fixed top-0 h-screen w-screen bg-gray-400/30 flex items-center justify-center ${toggle?"visible":"invisible"}`}>
-          <div className="relative h-1/2 w-1/2 rounded-lg shadow-lg bg-white p-6 flex flex-col">
-            <div className="flex justify-between pb-4">
-              <p className="font-semibold">Select your location</p>{" "}
-              <button onClick={() => settoggle(false)}>X</button>
+      <div
+        className={`fixed top-0 h-screen w-screen bg-gray-400/30 flex items-center justify-center ${
+          toggle ? "visible" : "invisible"
+        }`}
+      >
+        <div className="relative h-1/2 w-1/2 rounded-lg shadow-lg bg-white p-6 flex flex-col">
+          <div className="flex justify-between pb-4">
+            <p className="font-semibold">Select your location</p>{" "}
+            <button onClick={() => settoggle(false)}>X</button>
+          </div>
+          <p className="text-red-600 font-bold mb-2">{popupError}</p>
+          <div className="flex-1 flex gap-5">
+            <div className="flex-1  overflow-hidden rounded-xl">
+              {" "}
+              <Map setMapBox={(map) => setMapBox(map)} />{" "}
             </div>
-            <p className="text-red-600 font-bold mb-2">{popupError}</p>
-            <div className="flex-1 flex gap-5">
-              <div className="flex-1  overflow-hidden rounded-xl">
-                {" "}
-                <Map setMapBox={(map) => setMapBox(map)} />{" "}
-              </div>
-              <div className="flex-1 gap-10 flex flex-col items-end w-full">
-                <div className=" flex flex-col gap-2 w-full ">
-                  <label htmlFor="" className="text-lg font-medium">
-                    Address
-                  </label>
-                  <textarea
-                    onChange={(e) => {
-                      //@ts-ignore
-                      setData((data) => ({
-                        ...data,
-                        address: e.target.value,
-                      }));
-                    }}
-                    name=""
-                    id=""
-                    rows={5}
-                    placeholder="your address"
-                    className="rounded-md p-3 border border-black/10 focus:outline-none font-light w-full"
-                  />
-                </div>
-                <Button
-                  value="Next"
-                  onClick={() => {
-                    if (data.cords && data.address) {
-                      settoggle(false);
-                      setPopupError("")
-
-                    }else{
-                      setPopupError("Pin a location and add address")
-                    }
+            <div className="flex-1 gap-10 flex flex-col items-end w-full">
+              <div className=" flex flex-col gap-2 w-full ">
+                <label htmlFor="" className="text-lg font-medium">
+                  Address
+                </label>
+                <textarea
+                  onChange={(e) => {
+                    //@ts-ignore
+                    setData((data) => ({
+                      ...data,
+                      address: e.target.value,
+                    }));
                   }}
+                  name=""
+                  id=""
+                  rows={5}
+                  placeholder="your address"
+                  className="rounded-md p-3 border border-black/10 focus:outline-none font-light w-full"
                 />
               </div>
+              <Button
+                value="Next"
+                onClick={() => {
+                  if (data.cords && data.address) {
+                    settoggle(false);
+                    setPopupError("");
+                  } else {
+                    setPopupError("Pin a location and add address");
+                  }
+                }}
+              />
             </div>
           </div>
         </div>
-      
+      </div>
     </div>
   );
 }

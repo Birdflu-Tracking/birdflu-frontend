@@ -37,7 +37,7 @@ const Inventory = () => {
 
   const getBatches = useCallback(async () => {
     await axios
-      .get("http://localhost:8080/api/user/batches", { withCredentials: true })
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/batches`, { withCredentials: true })
       .then((res) => {
         console.log(res.data);
         setBatches(res.data.batches);

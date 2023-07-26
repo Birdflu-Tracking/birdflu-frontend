@@ -59,13 +59,13 @@ const Dashboard = () => {
   }, [cookie]);
   const getUserReports = useCallback(() => {
     axios
-      .get("http://localhost:8080/api/health-worker/reports/users/", {
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/health-worker/reports/users/`, {
         withCredentials: true,
       })
       .then((res) => {
         console.log(res.data);
         // setBatchSalesData(res.data);
-        let t = res.data.sellerReports.reduce((result, d) => {
+        let t = res.data.sellerReports.reduce((result: any, d: any) => {
           console.log(firebaseDateToDate(d.createdAt));
           result[firebaseDateToDate(d.createdAt)] =
             result[firebaseDateToDate(d.createdAt)] != undefined
@@ -74,7 +74,7 @@ const Dashboard = () => {
 
           return result;
         }, {});
-        let t2 = res.data.sellerReports.reduce((result, d) => {
+        let t2 = res.data.sellerReports.reduce((result: any, d: any) => {
           result[d.poultryShopName] =
             result[d.poultryShopName] != undefined
               ? ++result[d.poultryShopName]
@@ -170,13 +170,13 @@ const Dashboard = () => {
             <Map />
           </div>
           <div className="h-[300px] w-full rounded-xl bg-primary/10 p-4">
-            {allReports?<BarChart data={allReports} />: "No Report Data"}
+            {allReports ? <BarChart data={allReports} /> : "No Report Data"}
           </div>
           <div className="space-y-4">
             <h1 className="text-primary font-semibold">Highest Reports</h1>
             <div className="flex space-x-4">
               {highestReports
-                ? highestReports.map((d, index) => {
+                ? highestReports.map((d: any, index: any) => {
                     return (
                       <div
                         key={index}
@@ -190,7 +190,7 @@ const Dashboard = () => {
                           />
                           <div className="">
                             <p className="text-base font-semibold text-gray-600">
-                             {d.shopName}
+                              {d.shopName}
                             </p>
                             <p className="text-sm text-gray-600">Thivim,goa</p>
                           </div>
@@ -203,7 +203,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
- <HealthSidebar/>
+        <HealthSidebar />
       </div>
       {transferModalToggle && (
         <div className="absolute h-screen w-screen bg-gray-400/30 flex items-center justify-center">
@@ -258,7 +258,7 @@ const Dashboard = () => {
                   </div>
                 ))}
               </div>
-              <Button value="Submit" rounded="rounded-full" text="text-xs" />
+              <Button value="Submit" text="text-xs" />
             </div>
           </div>
         </div>

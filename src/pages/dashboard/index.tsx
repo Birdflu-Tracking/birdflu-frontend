@@ -62,7 +62,7 @@ const Dashboard = () => {
 
   const getCurrentReportRequests = useCallback(async () => {
     await axios
-      .get("http://localhost:8080/api/user/current/requests", {
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/current/requests`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -76,7 +76,7 @@ const Dashboard = () => {
 
   // const getSoldBatches = useCallback(async () => {
   //   await axios
-  //     .get("http://localhost:8080/api/user/sold-batches", {
+  //     .get("${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/sold-batches", {
   //       withCredentials: true,
   //     })
   //     .then((res) => {
@@ -119,14 +119,14 @@ const Dashboard = () => {
 
   const getDashboardData = useCallback(() => {
     axios
-      .get("http://localhost:8080/api/user/total-batches-generated-and-sold", {
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/total-batches-generated-and-sold`, {
         withCredentials: true,
       })
       .then((res) => {
         console.log(res.data);
         setBatchSalesData(res.data);
         if (res.data.soldBatches) {
-          let t = res.data.soldBatches.reduce((result, d) => {
+          let t = res.data.soldBatches.reduce((result: any, d: any) => {
             console.log(firebaseDateToDate(d.createdAt), d.batchSize);
             result[firebaseDateToDate(d.createdAt)] =
               result[firebaseDateToDate(d.createdAt)] != undefined
@@ -150,7 +150,7 @@ const Dashboard = () => {
 
   const getBatches = useCallback(async () => {
     await axios
-      .get("http://localhost:8080/api/user/batches", { withCredentials: true })
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/batches`, { withCredentials: true })
       .then((res) => {
         console.log(res.data);
         setBatches(res.data.batches);
@@ -166,7 +166,7 @@ const Dashboard = () => {
       console.log(nfcCode, currentBatch);
       axios
         .post(
-          `http://localhost:8080/api/user/transfer/batch`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/transfer/batch`,
           {
             batchId: currentBatch,
             nfcCode: nfcCode,
@@ -204,7 +204,7 @@ const Dashboard = () => {
       setBatchCreationLoading(true);
       axios
         .post(
-          "http://localhost:8080/api/user/create/batch",
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/create/batch`,
           { batchSize },
           { withCredentials: true }
         )
