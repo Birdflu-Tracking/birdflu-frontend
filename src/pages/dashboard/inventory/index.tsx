@@ -9,9 +9,12 @@ import axios from "axios";
 import { Batch } from "@/types";
 import { firebaseDateToDate, firebaseDateToTime } from "@/utils";
 import InventorySidebar from "@/features/ui/InventorySidebar/InventorySidebar";
+import { useCookies } from "react-cookie";
 const Inventory = () => {
   const [batches, setBatches] = useState<Array<Batch> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [cookies] = useCookies(["user"]);
+
   const links = [
     {
       name: "Dashboard",
@@ -37,7 +40,9 @@ const Inventory = () => {
 
   const getBatches = useCallback(async () => {
     await axios
-      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/batches`, { withCredentials: true })
+      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/user/batches`, {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res.data);
         setBatches(res.data.batches);
@@ -54,7 +59,13 @@ const Inventory = () => {
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
-      <Sidebar links={links} />
+      <Sidebar
+        links={
+          cookies.user.type == "distributor"
+            ? links.filter((d) => d.path != "/dashboard/sample-requests")
+            : links
+        }
+      />
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
@@ -88,7 +99,7 @@ const Inventory = () => {
             </table>
           </div>
         </div>
-      <InventorySidebar/>
+        <InventorySidebar />
       </div>
     </div>
   );

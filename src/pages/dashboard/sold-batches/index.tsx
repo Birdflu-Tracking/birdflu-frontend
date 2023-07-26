@@ -65,7 +65,13 @@ const SoldBatches = () => {
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
-      <Sidebar links={links} />
+      <Sidebar
+        links={
+          cookies.user.type == "distributor"
+            ? links.filter((d) => d.path != "/dashboard/sample-requests")
+            : links
+        }
+      />
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-[75%] rounded-xl p-5 space-y-4">
@@ -115,7 +121,7 @@ const SoldBatches = () => {
             </table>
           </div>
         </div>
-        <InventorySidebar/>
+        <InventorySidebar />
       </div>
     </div>
   );

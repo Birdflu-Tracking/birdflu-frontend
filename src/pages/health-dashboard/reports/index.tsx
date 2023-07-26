@@ -50,9 +50,12 @@ const Dashboard = () => {
 
   const getReportedSellers = async () => {
     await axios
-      .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/health-worker/reported-sellers/`, {
-        withCredentials: true,
-      })
+      .get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/health-worker/reported-sellers/`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((res) => {
         console.log(res);
         setReportedSellers(res.data.reportedSellers);
@@ -100,7 +103,7 @@ const Dashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td></td>
+                    <td>10</td>
                     <td>No Sellers</td>
                     <td></td>
                   </tr>
@@ -109,7 +112,7 @@ const Dashboard = () => {
             </table>
           </div>
         </div>
-     <HealthSidebar/>
+        <HealthSidebar />
       </div>
     </div>
   );

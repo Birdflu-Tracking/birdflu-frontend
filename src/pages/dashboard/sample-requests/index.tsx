@@ -11,6 +11,7 @@ import axios from "axios";
 import { BatchWithBuyer, FarmReports } from "@/types";
 import { firebaseDateToDate, firebaseDateToTime } from "@/utils";
 import Multiselect from "multiselect-react-dropdown";
+import { useCookies } from "react-cookie";
 
 const SampleRequests = () => {
   const [loading, setLoading] = useState(false);
@@ -20,6 +21,7 @@ const SampleRequests = () => {
   const [sampleSymptoms, setSampleSymptoms] = useState([]);
   const [currentReports, setCurrentReports] = useState([]);
   const [requestId, setRequestId] = useState<string | undefined>(undefined);
+  const [cookies] = useCookies(["user"]);
 
   const state = {
     options: [
@@ -74,7 +76,7 @@ const SampleRequests = () => {
     selectedItem: any,
     sampleNumber: number
   ) => {
-    let symptomsList = selectedList.map((d: { name: any; }) => d.name);
+    let symptomsList = selectedList.map((d: { name: any }) => d.name);
     let prev = [...sampleSymptoms];
     //@ts-ignore
     prev[sampleNumber] = symptomsList;
@@ -118,7 +120,13 @@ const SampleRequests = () => {
   return (
     <div className="flex w-screen h-screen bg-secondary ">
       {/* Sidebar */}
-      <Sidebar links={links} />
+      <Sidebar
+        links={
+          cookies.user.type == "distributor"
+            ? links.filter((d) => d.path != "/dashboard/sample-requests")
+            : links
+        }
+      />
       {/* MainComponent */}
       <div className="  flex-1 p-7 flex space-x-7">
         <div className=" bg-white h-full w-full rounded-xl p-5 space-y-4">

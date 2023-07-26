@@ -4,11 +4,13 @@ import Link from "next/link";
 import Logo from "@assets/logo/logo.svg";
 import { useRouter } from "next/router";
 import React from "react";
+import { useCookies } from "react-cookie";
 type Prop = {
   links: { name: string; path: string; icon: string }[];
 };
 const Sidebar: React.FC<Prop> = ({ links }) => {
   const router = useRouter();
+  const [cookies] = useCookies(["user"]);
 
   return (
     <div className="w-1/6 p-7 flex flex-col justify-between ">
