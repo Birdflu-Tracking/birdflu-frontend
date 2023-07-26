@@ -145,6 +145,7 @@ export default function Reporting() {
   };
 
   const imgAdded = (event: Event) => {
+    event.preventDefault();
     if (event && event.target?.files[0].size > 100000000) {
       // toast.error("😢️ PDF size should be less than 100MB!", toastStyles.error);
       setLetter(event.target?.files[0]);
@@ -179,7 +180,7 @@ export default function Reporting() {
 
         <div className="flex">
           {/* Reporters user data */}
-          <form onSubmit={(e) => e.preventDefault()}>
+          <form>
             {[
               {
                 dataName: "fullName",
@@ -220,7 +221,7 @@ export default function Reporting() {
                 label: string;
                 placeholder: string;
                 type: string;
-              }) => {
+              },index) => {
                 return (
                   <FormInput
                     required
@@ -234,7 +235,7 @@ export default function Reporting() {
                     placeholder={item.placeholder}
                     setSellerOption={setSelectedSeller}
                     type={item.type}
-                    key={uuidv4()}
+                    key={index}
                     searchOptions={sellers}
                     setData={setData}
                     //@ts-ignore

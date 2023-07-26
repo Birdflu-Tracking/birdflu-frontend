@@ -103,7 +103,7 @@ const Dashboard = () => {
                   ))
                 ) : (
                   <tr>
-                    <td>10</td>
+                    <td></td>
                     <td>No Sellers</td>
                     <td></td>
                   </tr>
